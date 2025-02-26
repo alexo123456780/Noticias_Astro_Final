@@ -1,0 +1,107 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout titulo="Registro">
+  <main class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 p-6">
+    <div class="max-w-md w-full transform transition-all duration-300 hover:scale-[1.01]">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-8">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Crear Cuenta</h2>
+            <p class="text-sm text-gray-600">
+              Registrate Aqui
+            </p>
+          </div>
+          <form id="registroForm" class="space-y-6">
+            <div class="space-y-4">
+              <div class="relative">
+                <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre Completo
+                </label>
+                <input
+                  id="nombre"
+                  name="nombre"
+                  type="text"
+                  required
+                  class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                />
+              </div>
+              <div class="relative">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                  Correo Electrónico
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                  placeholder="tu@email.com"
+                />
+              </div>
+              <div class="relative">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                  Contraseña
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                />
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform transition-all duration-300 hover:scale-[1.02]"
+              >
+                Crear Cuenta
+              </button>
+            </div>
+
+            <div class="text-center mt-4">
+              <a
+                href="/login"
+                class="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-300"
+              >
+                ¿Ya tienes cuenta? Inicia sesión aquí
+              </a>
+            </div>
+          </form>
+          <div id="error" class="mt-4 text-red-600 text-center text-sm hidden"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { useAuthStore } from '../stores/authStore';
+  import toast from 'react-hot-toast';
+
+  const registroForm = document.getElementById('registroForm');
+  const errorDiv = document.getElementById('error');
+
+  registroForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const nombre = formData.get('nombre') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    try {
+      await useAuthStore.getState().registro(nombre, email, password);
+      toast.success('Registro exitoso. Por favor inicia sesión.');
+      window.location.href = '/login';
+    } catch (error: any) {
+      if (errorDiv) {
+        errorDiv.textContent = error.message || 'Error al registrar usuario';
+        errorDiv.classList.remove('hidden');
+      }
+    }
+  });
+</script> 
