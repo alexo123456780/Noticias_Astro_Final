@@ -3,9 +3,19 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout titulo="Iniciar Sesión">
-  <main class="min-h-screen flex">
+  <main class="min-h-screen flex relative">
+    <!-- Fondo de Mérida -->
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?auto=format&fit=crop&q=80"
+        alt="Catedral de Mérida"
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+    </div>
+
     <!-- Panel izquierdo - Formulario -->
-    <div class="w-1/2 flex items-center justify-center p-8 bg-white">
+    <div class="w-1/2 flex items-center justify-center p-8 bg-white/95 backdrop-blur-lg relative z-10">
       <div class="w-full max-w-md space-y-8">
         <div class="text-center animate-fade-in">
           <div class="flex justify-center mb-6">
@@ -35,7 +45,6 @@ import Layout from '../layouts/Layout.astro';
                   required
                   class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
                   placeholder="tu@email.com"
-
                 />
               </div>
             </div>
@@ -93,22 +102,44 @@ import Layout from '../layouts/Layout.astro';
             </a>
           </div>
         </form>
-        
-        <!-- Toast Notifications -->
-        <div id="successToast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 opacity-0">
-          ¡Inicio de sesión exitoso!
-        </div>
-        <div id="errorToast" class="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 opacity-0">
-          Credenciales inválidas
-        </div>
       </div>
     </div>
 
-    <!-- Panel derecho - Imagen decorativa -->
-    <div class="w-1/2 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 relative overflow-hidden animate-gradient-x">
-      <div class="absolute inset-0 pattern-leaves opacity-10"></div>
-      <div class="absolute inset-0 flex items-center justify-center">
-        <div class="text-center text-white p-8 animate-float">
+    <!-- Panel derecho - Solo fondo -->
+    <div class="w-1/2 relative z-10"></div>
+
+    <!-- Modal de Validación -->
+    <div id="validationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+      <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform scale-95 transition-transform duration-300">
+        <div class="text-center">
+          <!-- Estado de carga -->
+          <div id="loadingState" class="hidden">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Validando credenciales</h3>
+            <p class="text-gray-600">Por favor espera un momento...</p>
+          </div>
+
+          <!-- Estado de éxito -->
+          <div id="successState" class="hidden">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+              <svg class="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">¡Inicio de sesión exitoso!</h3>
+            <p class="text-gray-600">Redirigiendo al dashboard...</p>
+          </div>
+
+          <!-- Estado de error -->
+          <div id="errorState" class="hidden">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+              <svg class="h-8 w-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Error de autenticación</h3>
+            <p class="text-gray-600">Las credenciales son incorrectas</p>
+          </div>
         </div>
       </div>
     </div>
@@ -116,27 +147,6 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <style>
-  @keyframes gradient-x {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  .animate-gradient-x {
-    background-size: 200% 200%;
-    animation: gradient-x 15s ease infinite;
-  }
-  
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-    100% { transform: translateY(0px); }
-  }
-  
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-  
   @keyframes fade-in {
     0% { opacity: 0; transform: translateY(10px); }
     100% { opacity: 1; transform: translateY(0); }
@@ -150,28 +160,47 @@ import Layout from '../layouts/Layout.astro';
     animation: fade-in 0.6s ease-out 0.2s forwards;
     opacity: 0;
   }
-  
-  .pattern-leaves {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48.97 0l3.657 3.657-1.414 1.414L46.143 0h2.828zM11.03 0L7.372 3.657 8.787 5.07 13.857 0H11.03zm32.284 0L49.8 6.485 48.384 7.9l-7.9-7.9h2.83zM16.686 0L10.2 6.485 11.616 7.9l7.9-7.9h-2.83zM22.344 0L13.858 8.485 15.272 9.9l7.9-7.9h-.828zm5.656 0L17.515 10.485 18.93 11.9l7.9-7.9h-2.83zm5.656 0l-9.9 9.9 1.415 1.415 7.9-7.9h-2.83zm5.657 0l-9.9 9.9 1.415 1.415 7.9-7.9h-2.83zM38.97 0l-9.9 9.9 1.415 1.415L41.8 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L47.457 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L53.114 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L58.77 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L64.428 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L70.085 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L75.742 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L81.4 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L87.057 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L92.714 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L98.37 0h-2.83zm5.657 0l-9.9 9.9 1.415 1.415L104.028 0h-2.83z' fill='%23ffffff' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
-  }
 </style>
 
 <script>
   import { useAuthStore } from '../stores/authStore';
-  import toast from 'react-hot-toast';
 
   const loginForm = document.getElementById('loginForm');
-  const successToast = document.getElementById('successToast');
-  const errorToast = document.getElementById('errorToast');
+  const validationModal = document.getElementById('validationModal');
+  const loadingState = document.getElementById('loadingState');
+  const successState = document.getElementById('successState');
+  const errorState = document.getElementById('errorState');
 
-  function showToast(element: HTMLElement | null) {
-    if (element) {
-      element.style.transform = 'translateX(0)';
-      element.style.opacity = '1';
-      setTimeout(() => {
-        element.style.transform = 'translateX(100%)';
-        element.style.opacity = '0';
-      }, 3000);
+  function showModal() {
+    if (validationModal) {
+      validationModal.style.opacity = '1';
+      validationModal.style.pointerEvents = 'auto';
+      const modalContent = validationModal.querySelector('div');
+      if (modalContent) {
+        modalContent.style.transform = 'scale(1)';
+      }
+    }
+  }
+
+  function hideModal() {
+    if (validationModal) {
+      validationModal.style.opacity = '0';
+      validationModal.style.pointerEvents = 'none';
+      const modalContent = validationModal.querySelector('div');
+      if (modalContent) {
+        modalContent.style.transform = 'scale(0.95)';
+      }
+    }
+  }
+
+  function showState(stateElement: HTMLElement | null) {
+    [loadingState, successState, errorState].forEach(state => {
+      if (state) {
+        state.classList.add('hidden');
+      }
+    });
+    if (stateElement) {
+      stateElement.classList.remove('hidden');
     }
   }
 
@@ -181,14 +210,20 @@ import Layout from '../layouts/Layout.astro';
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
+    showModal();
+    showState(loadingState);
+
     try {
       await useAuthStore.getState().login(email, password);
-      showToast(successToast);
+      showState(successState);
       setTimeout(() => {
         window.location.href = '/dashboard';
-      }, 1000);
+      }, 2000);
     } catch (error: any) {
-      showToast(errorToast);
+      showState(errorState);
+      setTimeout(() => {
+        hideModal();
+      }, 1000);
     }
   });
 </script>

@@ -1,0 +1,253 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout titulo="Suscripción Premium">
+  <div class="max-w-4xl mx-auto space-y-8">
+    <!-- Encabezado -->
+    <section class="text-center">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Accede a contenido exclusivo sobre Mérida</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Suscríbete a nuestro plan Premium y disfruta de reportajes especiales, análisis en profundidad y contenido exclusivo sobre Mérida y Yucatán.</p>
+    </section>
+
+    <!-- Planes de suscripción -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Plan Mensual -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 transition-transform duration-300 hover:scale-[1.02]">
+        <div class="p-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Plan Mensual</h2>
+          <div class="flex items-baseline mb-6">
+            <span class="text-5xl font-extrabold text-gray-900">$99</span>
+            <span class="text-xl text-gray-500 ml-2">/mes</span>
+          </div>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start">
+              <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Acceso ilimitado a todas las noticias</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Report  stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Reportajes exclusivos y análisis en profundidad</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Sin publicidad</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Cancelación en cualquier momento</span>
+            </li>
+          </ul>
+          <button class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors duration-300">
+            Suscribirme Ahora
+          </button>
+        </div>
+      </div>
+
+      <!-- Plan Anual -->
+      <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl shadow-lg overflow-hidden border border-yellow-200 transition-transform duration-300 hover:scale-[1.02]">
+        <div class="absolute top-4 right-4 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+          AHORRA 20%
+        </div>
+        <div class="p-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Plan Anual</h2>
+          <div class="flex items-baseline mb-6">
+            <span class="text-5xl font-extrabold text-gray-900">$949</span>
+            <span class="text-xl text-gray-500 ml-2">/año</span>
+          </div>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start">
+              <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Todo lo incluido en el plan mensual</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Acceso a eventos exclusivos en Mérida</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Descuentos en comercios locales asociados</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Boletín semanal exclusivo</span>
+            </li>
+          </ul>
+          <button class="w-full py-3 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg transition-colors duration-300">
+            Suscribirme y Ahorrar
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contenido Premium Destacado -->
+    <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <h2 class="text-xl font-bold text-gray-900">Contenido Premium Destacado</h2>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Artículo Premium 1 -->
+          <div class="group">
+            <div class="relative overflow-hidden rounded-xl aspect-video mb-3">
+              <img 
+                src="https://images.unsplash.com/photo-1586105251261-72a756497a11?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                alt="Paseo de Montejo, Mérida" 
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div class="absolute top-2 right-2 px-2 py-1 bg-yellow-500 text-white text-xs font-bold rounded-md">
+                PREMIUM
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">
+              Los secretos arquitectónicos del Paseo de Montejo
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">
+              Un recorrido por las mansiones históricas y sus historias ocultas.
+            </p>
+          </div>
+          
+          <!-- Artículo Premium 2 -->
+          <div class="group">
+            <div class="relative overflow-hidden rounded-xl aspect-video mb-3">
+              <img 
+                src="https://images.unsplash.com/photo-1565620731358-e8c038abc8d1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                alt="Gastronomía yucateca" 
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div class="absolute top-2 right-2 px-2 py-1 bg-yellow-500 text-white text-xs font-bold rounded-md">
+                PREMIUM
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">
+              Guía definitiva de la gastronomía yucateca
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">
+              Los mejores restaurantes y recetas tradicionales de la región.
+            </p>
+          </div>
+          
+          <!-- Artículo Premium 3 -->
+          <div class="group">
+            <div class="relative overflow-hidden rounded-xl aspect-video mb-3">
+              <img 
+                src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                alt="Desarrollo económico" 
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div class="absolute top-2 right-2 px-2 py-1 bg-yellow-500 text-white text-xs font-bold rounded-md">
+                PREMIUM
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">
+              El futuro económico de Mérida: análisis y proyecciones
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">
+              Expertos analizan las tendencias de inversión y desarrollo en la capital yucateca.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <h2 class="text-xl font-bold text-gray-900">Lo que dicen nuestros suscriptores</h2>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Testimonio 1 -->
+          <div class="bg-gray-50 p-6 rounded-xl">
+            <div class="flex items-center mb-4">
+              <img class="h-12 w-12 rounded-full object-cover mr-4" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Usuario" />
+              <div>
+                <p class="font-semibold text-gray-900">María Castillo</p>
+                <p class="text-sm text-gray-500">Suscriptora desde hace 1 año</p>
+              </div>
+            </div>
+            <p class="text-gray-600 italic">
+              "La suscripción premium me ha permitido estar mejor informada sobre lo que sucede en mi ciudad. Los reportajes exclusivos son de gran calidad y me encanta no tener que lidiar con publicidad."
+            </p>
+          </div>
+          
+          <!-- Testimonio 2 -->
+          <div class="bg-gray-50 p-6 rounded-xl">
+            <div class="flex items-center mb-4">
+              <img class="h-12 w-12 rounded-full object-cover mr-4" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Usuario" />
+              <div>
+                <p class="font-semibold text-gray-900">Roberto Méndez</p>
+                <p class="text-sm text-gray-500">Suscriptor desde hace 6 meses</p>
+              </div>
+            </div>
+            <p class="text-gray-600 italic">
+              "Vale cada peso. Los análisis en profundidad sobre el desarrollo urbano de Mérida me han ayudado a tomar mejores decisiones para mi negocio inmobiliario."
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <h2 class="text-xl font-bold text-gray-900">Preguntas Frecuentes</h2>
+      </div>
+      <div class="p-6">
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">¿Puedo cancelar mi suscripción en cualquier momento?</h3>
+            <p class="text-gray-600">Sí, puedes cancelar tu suscripción en cualquier momento desde tu perfil. No hay permanencia mínima ni penalizaciones por cancelación.</p>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">¿Qué métodos de pago aceptan?</h3>
+            <p class="text-gray-600">Aceptamos tarjetas de crédito/débito, PayPal y transferencias bancarias.</p>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">¿Puedo compartir mi cuenta con familiares?</h3>
+            <p class="text-gray-600">Cada suscripción permite el acceso desde hasta 2 dispositivos simultáneamente, ideal para compartir con un familiar directo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</DashboardLayout>
+
+<script>
+  // Verificar autenticación
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = '/login';
+  }
+  
+  // Funcionalidad para los botones de suscripción
+  document.addEventListener('DOMContentLoaded', () => {
+    const subscriptionButtons = document.querySelectorAll('.py-3.px-4.rounded-lg');
+    
+    subscriptionButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Aquí iría la lógica para procesar la suscripción
+        alert('Falta agregar esta parte en la api tilina.');
+      });
+    });
+  });
+</script>
+

@@ -1,0 +1,328 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout titulo="Detalle de Noticia">
+  <div class="max-w-4xl mx-auto space-y-8 py-8">
+    <!-- Encabezado de la noticia -->
+    <section>
+      <div class="mb-4 flex items-center space-x-2">
+        <a href="/dashboard" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Inicio</a>
+        <span class="text-gray-500">/</span>
+        <a href="/noticias" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Noticias</a>
+        <span class="text-gray-500">/</span>
+        <span class="text-gray-500 text-sm">Detalle</span>
+      </div>
+      
+      <div class="flex items-center gap-2 mb-4">
+        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Política Local</span>
+        <span class="text-sm text-gray-500">Publicado: 12 de febrero, 2025</span>
+      </div>
+      
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Inauguran nuevo tramo del Paseo de Montejo con inversión histórica para Mérida</h1>
+      
+      <div class="flex items-center mb-6">
+        <img class="h-10 w-10 rounded-full object-cover mr-3" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Autor" />
+        <div>
+          <p class="text-sm font-medium text-gray-900">Por Cristhian Llanes</p>
+          <p class="text-xs text-gray-500">Editor de Política</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Imagen principal -->
+    <section>
+      <div class="relative rounded-2xl overflow-hidden">
+        <img 
+          src="https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" 
+          alt="Paseo de Montejo, Mérida" 
+          class="w-full h-auto object-cover"
+        />
+        <div class="absolute bottom-0 left-0 p-4 bg-gradient-to-t from-black/70 to-transparent w-full">
+          <p class="text-white text-sm">Vista del emblemático Paseo de Montejo en Mérida, Yucatán</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Contenido de la noticia -->
+    <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-8">
+        <div class="prose prose-lg max-w-none">
+          <p class="font-bold text-xl">El gobierno estatal y municipal inauguraron la ampliación del emblemático Paseo de Montejo con una inversión sin precedentes que busca potenciar el turismo y mejorar la movilidad urbana.</p>
+          
+          <p>MÉRIDA, Yucatán.- Con una inversión histórica de más de 150 millones de pesos, autoridades estatales y municipales inauguraron este jueves la ampliación del emblemático Paseo de Montejo, una de las avenidas más importantes y turísticas de la capital yucateca.</p>
+          
+          <p>El proyecto, que abarca un tramo de 2.5 kilómetros, incluye la renovación completa de la infraestructura vial, ampliación de banquetas, instalación de ciclovías, áreas verdes y nuevo mobiliario urbano, así como la modernización del sistema de iluminación con tecnología LED de bajo consumo energético.</p>
+          
+          <p>Durante la ceremonia de inauguración, el gobernador destacó que esta obra representa "la transformación más significativa que ha tenido el Paseo de Montejo en las últimas décadas" y subrayó que el proyecto no solo mejorará la imagen urbana, sino que también impulsará el desarrollo económico y turístico de la zona.</p>
+          
+          <blockquote>
+            "Esta renovación del Paseo de Montejo no es solo una obra de infraestructura, es un proyecto que honra nuestra historia y mira hacia el futuro. Estamos creando espacios más humanos, más verdes y más accesibles para todos los meridanos y visitantes", señaló el mandatario estatal.
+          </blockquote>
+          
+          <h2>Beneficios para la movilidad y el turismo</h2>
+          
+          <p>El proyecto contempla la implementación de un sistema de movilidad integral que incluye:</p>
+          
+          <ul>
+            <li>Ampliación de banquetas para mejorar la accesibilidad peatonal</li>
+            <li>Construcción de 2.5 kilómetros de ciclovías</li>
+            <li>Renovación del sistema de semaforización inteligente</li>
+            <li>Instalación de 120 nuevas luminarias LED</li>
+            <li>Plantación de más de 200 árboles nativos</li>
+            <li>Creación de nuevos espacios públicos y áreas de descanso</li>
+          </ul>
+          
+          <p>Según datos proporcionados por la Secretaría de Turismo estatal, el Paseo de Montejo recibe anualmente a más de 500 mil visitantes, y con estas mejoras se espera incrementar esta cifra en al menos un 30% durante los próximos dos años.</p>
+          
+          <h2>Reacciones de comerciantes y residentes</h2>
+          
+          <p>Los comerciantes de la zona han expresado su satisfacción con la renovación, ya que esperan un aumento significativo en el flujo de visitantes y, por ende, en sus ventas. María González, propietaria de una tienda de artesanías en el Paseo, comentó que "después de los difíciles años de pandemia, esta renovación nos da esperanza de una recuperación económica".</p>
+          
+          <p>Por su parte, algunos residentes de colonias aledañas han manifestado preocupaciones sobre el posible aumento en el tráfico vehicular y la gentrificación de la zona. Sin embargo, las autoridades aseguran que el proyecto incluye medidas para mitigar estos impactos negativos.</p>
+          
+          <h2>Próximas etapas</h2>
+          
+          <p>El alcalde de Mérida anunció que esta renovación es solo la primera fase de un plan maestro más amplio que busca revitalizar todo el corredor urbano que conecta el Centro Histórico con el norte de la ciudad. Las siguientes etapas incluirán la renovación de calles perpendiculares al Paseo y la creación de nuevos espacios culturales.</p>
+          
+          <p>La obra fue financiada con recursos estatales, municipales y federales, y contó con la participación de empresas locales en su ejecución, lo que también generó empleos temporales para más de 300 trabajadores de la construcción.</p>
+          
+          <p>Las autoridades esperan que esta renovación consolide al Paseo de Montejo como uno de los bulevares más emblemáticos del sureste mexicano y refuerce la posición de Mérida como un destino turístico de primer nivel.
+        </div>
+      </div>
+    </section>
+    
+    <!-- Compartir y reacciones -->
+    <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex items-center space-x-4">
+            <span class="text-gray-700 font-medium">Compartir:</span>
+            <button class="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+              </svg>
+            </button>
+            <button class="p-2 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition-colors">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+            </button>
+            <button class="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-gray-700 font-medium">Reacciones:</span>
+            <div class="flex items-center space-x-2">
+              <button class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200 transition-colors flex items-center">
+                <span class="mr-1">👍</span> 124
+              </button>
+              <button class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200 transition-colors flex items-center">
+                <span class="mr-1">🔥</span> 89
+              </button>
+              <button class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200 transition-colors flex items-center">
+                <span class="mr-1">❤️</span> 56
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Comentarios -->
+    <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <h2 class="text-xl font-bold text-gray-900">Comentarios (24)</h2>
+      </div>
+      <div class="p-6">
+        <!-- Formulario de comentario -->
+        <div class="mb-8">
+          <div class="flex items-start space-x-4">
+            <img class="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Usuario" />
+            <div class="flex-1">
+              <textarea 
+                placeholder="Escribe un comentario..." 
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[100px]"
+              ></textarea>
+              <div class="mt-2 flex justify-end">
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  Comentar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Lista de comentarios -->
+        <div class="space-y-6">
+          <!-- Comentario 1 -->
+          <div class="flex items-start space-x-4">
+            <img class="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Usuario" />
+            <div class="flex-1">
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                  <div>
+                    <p class="font-medium text-gray-900">Laura Martínez</p>
+                    <p class="text-xs text-gray-500">Hace 2 horas</p>
+                  </div>
+                  <button class="text-gray-400 hover:text-gray-600">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                    </svg>
+                  </button>
+                </div>
+                <p class="text-gray-700">¡Excelente noticia para Mérida! Ya era hora de que se renovara esta importante avenida. Espero que también mejore el tráfico en la zona.</p>
+                <div class="mt-3 flex items-center space-x-4">
+                  <button class="text-gray-500 hover:text-blue-600 text-sm flex items-center">
+                    <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
+                    </svg>
+                    Me gusta (12)
+                  </button>
+                  <button class="text-gray-500 hover:text-blue-600 text-sm">Responder</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Comentario 2 -->
+          <div class="flex items-start space-x-4">
+            <img class="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Usuario" />
+            <div class="flex-1">
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                  <div>
+                    <p class="font-medium text-gray-900">Miguel Ángel Pérez</p>
+                    <p class="text-xs text-gray-500">Hace 5 horas</p>
+                  </div>
+                  <button class="text-gray-400 hover:text-gray-600">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                    </svg>
+                  </button>
+                </div>
+                <p class="text-gray-700">Me preocupa que con estas mejoras suban los precios de los locales y terminen desplazando a los pequeños comerciantes tradicionales. Ojalá se implementen políticas para proteger a los negocios locales.</p>
+                <div class="mt-3 flex items-center space-x-4">
+                  <button class="text-gray-500 hover:text-blue-600 text-sm flex items-center">
+                    <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
+                    </svg>
+                    Me gusta (8)
+                  </button>
+                  <button class="text-gray-500 hover:text-blue-600 text-sm">Responder</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Ver más comentarios -->
+          <div class="text-center">
+            <button class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors">
+              Ver más comentarios
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Noticias relacionadas -->
+    <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <h2 class="text-xl font-bold text-gray-900">Noticias relacionadas</h2>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Noticia relacionada 1 -->
+          <div class="group">
+            <div class="relative overflow-hidden rounded-xl aspect-video mb-3">
+              <img 
+                src="https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                alt="Desarrollo urbano" 
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+              Anuncian plan maestro para el desarrollo urbano de Mérida 2023-2030
+            </h3>
+            <p class="text-sm text-gray-600">
+              El plan incluye importantes inversiones en infraestructura y movilidad sustentable.
+            </p>
+          </div>
+          
+          <!-- Noticia relacionada 2 -->
+          <div class="group">
+            <div class="relative overflow-hidden rounded-xl aspect-video mb-3">
+              <img 
+                src="https://images.unsplash.com/photo-1600623471616-8c1966c91ff6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                alt="Ciclovía" 
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+              Mérida amplía su red de ciclovías con 15 kilómetros adicionales
+            </h3>
+            <p class="text-sm text-gray-600">
+              La ciudad continúa apostando por la movilidad sustentable y el transporte no motorizado.
+            </p>
+          </div>
+          
+          <!-- Noticia relacionada 3 -->
+          <div class="group">
+            <div class="relative overflow-hidden rounded-xl aspect-video mb-3">
+              <img 
+                src="https://images.unsplash.com/photo-1517581177682-a085bb7ffb38?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                alt="Turismo" 
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+              Mérida registra récord de turistas en el primer trimestre de 2023
+            </h3>
+            <p class="text-sm text-gray-600">
+              La capital yucateca se consolida como uno de los destinos turísticos más importantes del sureste mexicano.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</DashboardLayout>
+
+<script>
+  // Verificar autenticación
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = '/login';
+  }
+  
+  // Funcionalidad para los botones de compartir
+  document.addEventListener('DOMContentLoaded', () => {
+    const shareButtons = document.querySelectorAll('.bg-blue-100, .bg-green-100, .bg-red-100');
+    
+    shareButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Aquí iría la lógica para compartir en redes sociales
+        alert('Función de compartir activada');
+      });
+    });
+    
+    // Funcionalidad para los botones de reacciones
+    const reactionButtons = document.querySelectorAll('.px-3.py-1.bg-gray-100');
+    
+    reactionButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Aquí iría la lógica para registrar la reacción
+        const currentText = button.textContent || '';
+        const parts = currentText.trim().split(' ');
+        const emoji = parts[0];
+        let count = parseInt(parts[1] || '0');
+        
+        button.innerHTML = `<span class="mr-1">${emoji}</span> ${count + 1}`;
+      });
+    });
+  });
+</script>
+

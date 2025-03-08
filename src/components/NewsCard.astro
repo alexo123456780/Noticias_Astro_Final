@@ -1,0 +1,81 @@
+---
+// Props para la tarjeta de noticia
+const { 
+  title, 
+  excerpt, 
+  category, 
+  image, 
+  author, 
+  time, 
+  isPremium = false,
+  categoryColor = "blue" // Opciones: blue, green, yellow, purple, red
+} = Astro.props;
+
+// Mapeo de colores para las categorías
+const colorMap = {
+  blue: {
+    bg: "bg-blue-100",
+    text: "text-blue-800"
+  },
+  green: {
+    bg: "bg-green-100",
+    text: "text-green-800"
+  },
+  yellow: {
+    bg: "bg-yellow-100",
+    text: "text-yellow-800"
+  },
+  purple: {
+    bg: "bg-purple-100",
+    text: "text-purple-800"
+  },
+  red: {
+    bg: "bg-red-100",
+    text: "text-red-800"
+  }
+};
+
+const colors = colorMap[categoryColor] || colorMap.blue;
+---
+
+<div class="p-6 hover:bg-gray-50 transition-colors duration-300 news-item" data-category={categoryColor}>
+  <div class="flex items-start gap-4">
+    <div class="hidden sm:block flex-shrink-0 w-20 h-20">
+      <img 
+        src={image || "/placeholder.svg"} 
+        alt={title} 
+        class="w-full h-full object-cover rounded-lg"
+      />
+    </div>
+    <div class="flex-1">
+      <div class="flex items-center gap-2 mb-1">
+        <span class={`px-2 py-1 ${colors.bg} ${colors.text} text-xs font-medium rounded-full`}>{category}</span>
+        <span class="text-xs text-gray-500">{time}</span>
+        {isPremium && (
+          <span class="px-2 py-0.5 bg-yellow-500 text-white rounded text-xs">PREMIUM</span>
+        )}
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-1">
+        {title}
+      </h3>
+      <p class="text-sm text-gray-600 mb-2 line-clamp-2">
+        {excerpt}
+      </p>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-500">Por {author}</span>
+        <div class="flex items-center space-x-2">
+          <button class="p-1 text-gray-400 hover:text-blue-500 transition-colors">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+          </button>
+          <button class="p-1 text-gray-400 hover:text-red-500 transition-colors">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

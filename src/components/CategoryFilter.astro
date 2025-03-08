@@ -1,0 +1,88 @@
+---
+const categories = [
+{ id: 'all', name: 'Todas', active: true },
+{ id: 'politics', name: 'Política', active: false },
+{ id: 'economy', name: 'Economía', active: false },
+{ id: 'culture', name: 'Cultura', active: false },
+{ id: 'tourism', name: 'Turismo', active: false },
+{ id: 'sports', name: 'Deportes', active: false },
+{ id: 'security', name: 'Seguridad', active: false },
+{ id: 'education', name: 'Educación', active: false },
+];
+---
+
+<div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+<div class="p-6 border-b border-gray-200">
+  <h2 class="text-xl font-bold text-gray-900">Categorías</h2>
+</div>
+<div class="p-6">
+  <div class="flex flex-wrap gap-3" id="category-filters">
+    {categories.map((category) => (
+      <button 
+        data-category={category.id}
+        class={`px-4 py-2 rounded-full transition-colors ${
+          category.active 
+            ? 'bg-blue-600 text-white' 
+            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+        }`}
+      >
+        {category.name}
+      </button>
+    ))}
+  </div>
+</div>
+</div>
+
+<script>
+// Funcionalidad para los botones de categoría
+document.addEventListener('DOMContentLoaded', () => {
+  const categoryButtons = document.querySelectorAll('#category-filters button');
+  
+  categoryButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Quitar la clase activa de todos los botones
+      categoryButtons.forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-gray-200', 'text-gray-800');
+      });
+      
+      // Añadir la clase activa al botón seleccionado
+      button.classList.remove('bg-gray-200', 'text-gray-800');
+      button.classList.add('bg-blue-600', 'text-white');
+      
+      // Obtener la categoría seleccionada
+      const selectedCategory = button.getAttribute('data-category');
+      
+      // Filtrar las noticias según la categoría seleccionada
+      filterNewsByCategory(selectedCategory);
+    });
+  });
+});
+
+// Función para filtrar noticias por categoría
+function filterNewsByCategory(category) {
+  const newsItems = document.querySelectorAll('.news-item');
+  
+  if (category === 'all') {
+    // Mostrar todas las noticias
+    newsItems.forEach(item => {
+      if (item instanceof HTMLElement) {
+        item.style.display = 'block';
+      }
+    });
+  } else {
+    // Mostrar solo las noticias de la categoría seleccionada
+    newsItems.forEach(item => {
+      const newsCategory = item.getAttribute('data-category');
+      if (item instanceof HTMLElement) {
+        if (newsCategory === category) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      }
+    });
+  }
+}
+</script>
+

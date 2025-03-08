@@ -3,8 +3,19 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout titulo="Bienvenido">
-  <main class="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 animate-gradient-x">
-    <div class="max-w-md w-full space-y-8 p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl transform hover:scale-[1.02] transition-all duration-300">
+  <main class="min-h-screen flex items-center justify-center relative">
+    <!-- Fondo de Mérida -->
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="https://images.unsplash.com/photo-1629759351423-0340b5c88cc4?auto=format&fit=crop&q=80"
+        alt="Mérida Yucatán"
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="max-w-md w-full space-y-8 p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl transform hover:scale-[1.02] transition-all duration-300 z-10">
       <div class="text-center">
         <div class="flex justify-center mb-6">
           <div class="p-4 bg-emerald-100 rounded-2xl">
@@ -17,6 +28,7 @@ import Layout from '../layouts/Layout.astro';
           Login
         </h2>
         <p class="mt-4 text-lg text-gray-600 animate-fade-in-delayed">
+          Bienvenido a Mérida
         </p>
       </div>
       <div class="mt-10 space-y-4">
@@ -48,17 +60,6 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <style>
-  @keyframes gradient-x {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  .animate-gradient-x {
-    background-size: 200% 200%;
-    animation: gradient-x 15s ease infinite;
-  }
-  
   @keyframes fade-in {
     0% { opacity: 0; transform: translateY(10px); }
     100% { opacity: 1; transform: translateY(0); }

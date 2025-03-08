@@ -1,0 +1,39 @@
+---
+// Props para el componente de contenido premium
+const { 
+  title = "Contenido Premium",
+  benefits = [
+    "Acceso ilimitado a todas las noticias",
+    "Reportajes exclusivos sobre Mérida",
+    "Sin publicidad"
+  ],
+  buttonText = "Suscribirme por $99/mes",
+  buttonLink = "/premium"
+} = Astro.props;
+---
+
+<div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl shadow-lg overflow-hidden border border-yellow-200">
+  <div class="p-6 border-b border-yellow-200">
+    <h2 class="text-xl font-bold text-yellow-800">{title}</h2>
+  </div>
+  <div class="p-6">
+    <div class="space-y-4">
+      <div class="bg-white rounded-lg p-4 shadow-sm">
+        <h3 class="font-semibold text-gray-900 mb-2">¿Por qué suscribirte?</h3>
+        <ul class="space-y-2">
+          {benefits.map(benefit => (
+            <li class="flex items-start">
+              <svg class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span class="text-sm">{benefit}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <a href={buttonLink} class="block w-full py-3 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-medium text-center rounded-lg transition-colors duration-300">
+        {buttonText}
+      </a>
+    </div>
+  </div>
+</div>
