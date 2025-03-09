@@ -1,7 +1,7 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-// Configuración base de axios
+
 const api = axios.create({
   baseURL: 'http://127.0.0.1:8000/api',
   headers: {
@@ -10,7 +10,6 @@ const api = axios.create({
   },
 });
 
-// Interceptor para agregar el token a las peticiones
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -19,7 +18,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor para manejar errores
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -29,14 +27,14 @@ api.interceptors.response.use(
   }
 );
 
-// Servicios de autenticación
+
 export const authService = {
   login: async (email: string, password: string) => {
     try {
       const response = await api.post('/login', { email, password });
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
-        toast.success(response.data.message || 'Inicio de sesión exitoso');
+        toast.success(response.data.message || 'Inicio de sesión exitoso tilin');
       }
       return {
         user: response.data.user,

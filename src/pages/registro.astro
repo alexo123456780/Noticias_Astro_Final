@@ -3,105 +3,255 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout titulo="Registro">
-  <main class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 p-6">
-    <div class="max-w-md w-full transform transition-all duration-300 hover:scale-[1.01]">
-      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div class="p-8">
-          <div class="text-center mb-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Crear Cuenta</h2>
-            <p class="text-sm text-gray-600">
-              Registrate Aqui
-            </p>
+  <main class="min-h-screen flex relative">
+    <!-- Panel izquierdo - Formulario -->
+    <div class="w-1/2 flex items-center justify-center p-8 bg-white/95 backdrop-blur-lg relative z-10 animate-slide-in">
+      <div class="w-full max-w-md space-y-8">
+        <div class="text-center animate-fade-in">
+          <div class="flex justify-center mb-6">
+            <div class="p-4 bg-emerald-100 rounded-2xl">
+              <svg class="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+              </svg>
+            </div>
           </div>
-          <form id="registroForm" class="space-y-6">
-            <div class="space-y-4">
-              <div class="relative">
-                <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">
-                  Nombre Completo
-                </label>
+          <h2 class="text-4xl font-bold text-gray-900 tracking-tight">Crear Cuenta</h2>
+          <p class="mt-2 text-lg text-gray-600">
+            Únete a nuestra comunidad
+          </p>
+        </div>
+
+
+
+        
+        <form id="registroForm" class="mt-8 space-y-6 animate-fade-in-delayed">
+          <div class="space-y-5">
+            <div class="transform transition-all duration-300 hover:scale-[1.02]">
+              <label for="nombre" class="block text-sm font-medium text-gray-700">
+                Nombre Completo
+              </label>
+              <div class="mt-1">
                 <input
                   id="nombre"
                   name="nombre"
                   type="text"
                   required
-                  class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                  class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
                 />
               </div>
-              <div class="relative">
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                  Correo Electrónico
-                </label>
+            </div>
+
+            <div class="transform transition-all duration-300 hover:scale-[1.02]">
+              <label for="email" class="block text-sm font-medium text-gray-700">
+                Correo Electrónico
+              </label>
+              <div class="mt-1">
                 <input
                   id="email"
                   name="email"
                   type="email"
                   required
-                  class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                  class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
                   placeholder="tu@email.com"
                 />
               </div>
-              <div class="relative">
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-                  Contraseña
-                </label>
+            </div>
+
+            <div class="transform transition-all duration-300 hover:scale-[1.02]">
+              <label for="password" class="block text-sm font-medium text-gray-700">
+                Contraseña
+              </label>
+              <div class="mt-1">
                 <input
                   id="password"
                   name="password"
                   type="password"
                   required
-                  class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                  class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
                 />
               </div>
             </div>
+          </div>
 
-            <div>
-              <button
-                type="submit"
-                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform transition-all duration-300 hover:scale-[1.02]"
-              >
-                Crear Cuenta
-              </button>
-            </div>
+          <div>
+            <button
+              type="submit"
+              class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transform transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl"
+            >
+              <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                <svg class="h-5 w-5 text-emerald-100 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+              </span>
+              Crear Cuenta
+            </button>
+          </div>
 
-            <div class="text-center mt-4">
-              <a
-                href="/login"
-                class="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-300"
-              >
-                ¿Ya tienes cuenta? Inicia sesión aquí
-              </a>
+          <div class="text-center">
+            <a
+              href="/login"
+              class="font-medium text-emerald-600 hover:text-emerald-500 transition-colors duration-300"
+            >
+              ¿Ya tienes cuenta? Inicia sesión aquí
+            </a>
+          </div>
+        </form>
+        <div id="error" class="mt-4 text-red-600 text-center text-sm hidden"></div>
+      </div>
+    </div>
+
+    <!-- Panel derecho - Fondo animado -->
+    <div class="w-1/2 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-600 animate-gradient">
+        <div class="absolute inset-0 backdrop-blur-[2px]"></div>
+      </div>
+    </div>
+
+    <!-- Modal de Validación -->
+    <div id="validationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+      <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform scale-95 transition-transform duration-300">
+        <div class="text-center">
+          <!-- Estado de carga -->
+          <div id="loadingState" class="hidden">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Procesando registro</h3>
+            <p class="text-gray-600">Por favor espera un momento...</p>
+          </div>
+
+          <!-- Estado de éxito -->
+          <div id="successState" class="hidden">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+              <svg class="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
             </div>
-          </form>
-          <div id="error" class="mt-4 text-red-600 text-center text-sm hidden"></div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">¡Registro exitoso!</h3>
+            <p class="text-gray-600">Redirigiendo a inicio de sesión...</p>
+          </div>
+
+          <!-- Estado de error -->
+          <div id="errorState" class="hidden">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+              <svg class="h-8 w-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Error en el registro</h3>
+            <p id="errorMessage" class="text-gray-600">Ha ocurrido un error</p>
+          </div>
         </div>
       </div>
     </div>
-  </main>
-</Layout>
 
-<script>
-  import { useAuthStore } from '../stores/authStore';
-  import toast from 'react-hot-toast';
-
-  const registroForm = document.getElementById('registroForm');
-  const errorDiv = document.getElementById('error');
-
-  registroForm?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const nombre = formData.get('nombre') as string;
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    try {
-      await useAuthStore.getState().registro(nombre, email, password);
-      toast.success('Registro exitoso. Por favor inicia sesión.');
-      window.location.href = '/login';
-    } catch (error: any) {
-      if (errorDiv) {
-        errorDiv.textContent = error.message || 'Error al registrar usuario';
-        errorDiv.classList.remove('hidden');
+    <style>
+      @keyframes slide-in {
+        0% { opacity: 0; transform: translateX(100%); }
+        100% { opacity: 1; transform: translateX(0); }
       }
-    }
-  });
-</script> 
+
+      @keyframes fade-in {
+        0% { opacity: 0; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      .animate-slide-in {
+        animation: slide-in 0.6s ease-out forwards;
+      }
+
+      .animate-fade-in {
+        animation: fade-in 0.6s ease-out forwards;
+      }
+
+      .animate-fade-in-delayed {
+        animation: fade-in 0.6s ease-out 0.2s forwards;
+        opacity: 0;
+      }
+
+      .animate-gradient {
+        background-size: 200% 200%;
+        animation: gradient 15s ease infinite;
+      }
+    </style>
+
+    <script>
+      import { useAuthStore } from '../stores/authStore';
+      import toast from 'react-hot-toast';
+
+      const registroForm = document.getElementById('registroForm');
+      const errorDiv = document.getElementById('error');
+      const validationModal = document.getElementById('validationModal');
+      const loadingState = document.getElementById('loadingState');
+      const successState = document.getElementById('successState');
+      const errorState = document.getElementById('errorState');
+      const errorMessage = document.getElementById('errorMessage');
+
+      function showModal() {
+        if (validationModal) {
+          validationModal.style.opacity = '1';
+          validationModal.style.pointerEvents = 'auto';
+          const modalContent = validationModal.querySelector('div');
+          if (modalContent) {
+            modalContent.style.transform = 'scale(1)';
+          }
+        }
+      }
+
+      function hideModal() {
+        if (validationModal) {
+          validationModal.style.opacity = '0';
+          validationModal.style.pointerEvents = 'none';
+          const modalContent = validationModal.querySelector('div');
+          if (modalContent) {
+            modalContent.style.transform = 'scale(0.95)';
+          }
+        }
+      }
+
+      function showState(stateElement: HTMLElement | null) {
+        [loadingState, successState, errorState].forEach(state => {
+          if (state) {
+            state.classList.add('hidden');
+          }
+        });
+        if (stateElement) {
+          stateElement.classList.remove('hidden');
+        }
+      }
+
+      registroForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target as HTMLFormElement);
+        const nombre = formData.get('nombre') as string;
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+        showModal();
+        showState(loadingState);
+
+        try {
+          await useAuthStore.getState().registro(nombre, email, password);
+          showState(successState);
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 2000);
+        } catch (error: any) {
+          if (errorMessage) {
+            errorMessage.textContent = error.message;
+          }
+          showState(errorState);
+          setTimeout(() => {
+            hideModal();
+            if (errorDiv) {
+              errorDiv.textContent = error.message;
+              errorDiv.classList.remove('hidden');
+            }
+          }, 1500);
+        }
+      });
+    </script>
