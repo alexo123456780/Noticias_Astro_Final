@@ -1,0 +1,187 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import { newsService } from '../../services/newsService';
+import type { News, NewsImage } from '../../types/news';
+
+// Define getStaticPaths to pre-generar las rutas en tiempo de compilación
+export async function getStaticPaths() {
+  // Obtener todas las noticias para generar las rutas
+  const response = await newsService.getAllNews();
+  const allNews = response.data || [];
+  
+  // Crear un path para cada noticia
+  return allNews.map((news) => ({
+    params: { id: news.id.toString() },
+    props: { news },
+  }));
+}
+
+// Obtener el ID de la noticia de los parámetros y la noticia de props
+const { id } = Astro.params;
+const { news: propNews } = Astro.props;
+
+// Obtener los datos de la noticia y sus imágenes
+let news: News = propNews as News;
+let newsImages: NewsImage[] = [];
+let loading = true;
+let error: string | null = null;
+
+try {
+  if (id) {
+    // Si no tenemos la noticia en props (por ejemplo, en modo dev), la obtenemos de la API
+    if (!news) {
+      const newsResponse = await newsService.getNewsById(parseInt(id));
+      if (newsResponse.data) {
+        news = newsResponse.data;
+      } else {
+        error = 'Noticia no encontrada';
+      }
+    }
+    
+    // Obtener las imágenes de la noticia
+    const imagesResponse = await newsService.getNewsImages(parseInt(id));
+    newsImages = imagesResponse.data || [];
+  }
+  loading = false;
+} catch (err) {
+  error = 'Error al cargar la noticia';
+  loading = false;
+  console.error('Error al cargar la noticia:', err);
+}
+---
+
+<DashboardLayout titulo={news ? news.title : 'Detalle de Noticia'}>
+<div class="max-w-4xl mx-auto py-8">
+  <div class="mb-6">
+    <a href="/noticias" class="text-red-600 hover:text-red-800 flex items-center font-medium transition-colors duration-200">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+      Volver a la lista
+    </a>
+  </div>
+  
+  {loading && (
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8 text-center">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+      <p class="text-gray-600">Cargando noticia...</p>
+    </div>
+  )}
+  
+  {error && (
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8 text-center">
+      <svg class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <p class="text-red-500 font-medium">{error}</p>
+      <button id="retry-button" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300">
+        Reintentar
+      </button>
+    </div>
+  )}
+  
+  {!loading && !error && !news && (
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden p-8 text-center">
+      <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <p class="text-gray-600 font-medium">Noticia no encontrada</p>
+      <a href="/noticias" class="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300">
+        Ver todas las noticias
+      </a>
+    </div>
+  )}
+  
+  {!loading && !error && news && (
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="relative">
+        <img 
+          src={news.principal_image || "https://via.placeholder.com/1200x400"} 
+          alt={news.title} 
+          class="w-full h-80 object-cover"
+        />
+        <div class="absolute top-4 right-4 flex space-x-2">
+          {news.isPremium && (
+            <span class="px-4 py-1.5 bg-yellow-500 text-white text-sm font-bold rounded-full shadow-md">
+              PREMIUM
+            </span>
+          )}
+          {news.is_featured && (
+            <span class="px-4 py-1.5 bg-red-600 text-white text-sm font-bold rounded-full shadow-md">
+              DESTACADO
+            </span>
+          )}
+        </div>
+      </div>
+      
+      <div class="p-8">
+        <div class="flex items-center mb-6 flex-wrap">
+          <div class="flex flex-wrap gap-2">
+            {news.categories && Array.isArray(news.categories) && news.categories.map((category: any) => (
+              <span class="px-4 py-1 bg-red-50 text-red-700 text-sm font-medium rounded-full mb-2 border border-red-100">
+                {typeof category === 'object' ? category.category : category}
+              </span>
+            ))}
+          </div>
+          <span class="ml-auto text-sm font-medium text-gray-500">
+            {new Date(news.publication_date).toLocaleDateString('es-ES', {day: 'numeric', month: 'long', year: 'numeric'})}
+          </span>
+        </div>
+        
+        <h1 class="text-4xl font-bold text-gray-900 mb-6 leading-tight">{news.title}</h1>
+        
+        <div class="text-lg text-gray-700 leading-relaxed space-y-6 mb-8">
+          <p>{news.content}</p>
+        </div>
+        
+        {newsImages.length > 0 && (
+          <div class="mt-10 bg-gray-50 p-6 rounded-xl">
+            <h3 class="text-2xl font-semibold text-gray-900 mb-6 border-b border-gray-200 pb-2">Galería de imágenes</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {newsImages.map((image) => (
+                <div class="aspect-video rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <img 
+                    src={image.image || "/placeholder.svg"} 
+                    alt="Imagen de la noticia" 
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <div class="flex items-center pt-8 border-t border-gray-200 mt-10 text-gray-600">
+          <div class="flex items-center">
+            <span class="text-sm font-medium">
+              Por {news.editor?.name || 'Editor'}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+</DashboardLayout>
+
+<script>
+import { newsService } from '../../services/newsService';
+import toast from 'react-hot-toast';
+
+// Verificar autenticación
+if (typeof window !== 'undefined') {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = '/login';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Botón de reintentar
+  const retryButton = document.getElementById('retry-button');
+  retryButton?.addEventListener('click', () => {
+    window.location.reload();
+  });
+});
+</script>
+

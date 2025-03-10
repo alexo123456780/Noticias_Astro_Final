@@ -1,0 +1,56 @@
+---
+// Obtener el año actual para el copyright
+const currentYear = new Date().getFullYear();
+
+// Enlaces del footer
+const footerSections = [
+  {
+    title: "Nuestra Empresa",
+    links: [
+      { name: "Sobre Nosotros", url: "#" },
+      { name: "Carreras", url: "#" },
+      { name: "Blog", url: "#" }
+    ]
+  },
+  {
+    title: "Recursos",
+    links: [
+      { name: "Documentación", url: "#" },
+      { name: "Tutoriales", url: "#" },
+      { name: "Guías", url: "#" }
+    ]
+  },
+  {
+    title: "Legal",
+    links: [
+      { name: "Privacidad", url: "#" },
+      { name: "Términos", url: "#" },
+      { name: "Cookies", url: "#" }
+    ]
+  }
+];
+---
+
+<footer class="bg-white border-t border-gray-200 mt-8">
+  <div class="max-w-screen-2xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {footerSections.map(section => (
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">{section.title}</h3>
+          <ul class="space-y-2">
+            {section.links.map(link => (
+              <li>
+                <a href={link.url} class="text-gray-600 hover:text-red-600 transition-colors">{link.name}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    
+    <div class="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500">
+      &copy; {currentYear} Noticias Merida.
+    </div>
+  </div>
+</footer>
+

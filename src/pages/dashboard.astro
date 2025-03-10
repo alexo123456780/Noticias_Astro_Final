@@ -4,354 +4,257 @@ import PremiumBanner from '../components/PremiumBanner.astro';
 import CategoryFilter from '../components/CategoryFilter.astro';
 import NewsCard from '../components/NewsCard.astro';
 import PremiumContent from '../components/PremiumContent.astro';
-import NoticiaDetalle from './noticia-detalle.astro';
+import Footer from '../components/Footer.astro';
+import TopNavbar from '../components/TopNavbar.astro';
 
-// Datos de ejemplo para noticias
-const featuredNews = [
-{
-  id: 1,
-  title: "Inauguran nueva sección del Paseo de Montejo con inversión millonaria",
-  excerpt: "El proyecto incluye áreas verdes, ciclovías y espacios culturales que beneficiarán a miles de meridanos.",
-  image: "https://images.unsplash.com/photo-1586105251261-72a756497a11?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-  category: "ÚLTIMA HORA",
-  categoryColor: "red",
-  author: "Carlos Medina",
-  time: "Hace 2 horas",
-  isPremium: true
-},
-{
-  id: 2,
-  title: "Festival de la Ciudad celebrará 20 años con artistas internacionales",
-  excerpt: "El evento cultural más importante de Mérida traerá artistas de renombre internacional.",
-  image: "https://images.unsplash.com/photo-1518638150340-f706e86654de?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-  category: "CULTURA",
-  categoryColor: "blue",
-  author: "María González",
-  time: "Hace 5 horas",
-  isPremium: false
-},
-{
-  id: 3,
-  title: "Progreso registra récord de visitantes en temporada vacacional",
-  excerpt: "El puerto yucateco se consolida como uno de los destinos turísticos más importantes del sureste mexicano.",
-  image: "https://images.unsplash.com/photo-1589083130544-0d6a2926e519?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-  category: "TURISMO",
-  categoryColor: "green",
-  author: "Roberto Díaz",
-  time: "Hace 8 horas",
-  isPremium: false
+// Importar servicios
+import { newsService } from '../services/newsService';
+import { redactionService } from '../services/redactionService';
+import type { News, Category } from '../types/news';
+
+// Obtener datos de la API
+let news: News[] = [];
+let categories: Category[] = [];
+let loading = true;
+let error: string | null = null;
+
+try {
+  const [newsResponse, categoriesResponse] = await Promise.all([
+    newsService.getAllNews(),
+    newsService.getAllCategories()
+  ]);
+  
+  news = newsResponse.data || [];
+  categories = categoriesResponse.data || [];
+  loading = false;
+} catch (err) {
+  error = 'Error al cargar datos';
+  loading = false;
+  console.error('Error al cargar datos:', err);
 }
-];
 
-const latestNews = [
-{
-  id: 1,
-  title: "Ayuntamiento de Mérida anuncia nuevos proyectos de infraestructura urbana",
-  excerpt: "El alcalde presentó el plan de desarrollo que incluye la renovación de parques, calles y servicios públicos en diferentes colonias de la ciudad.",
-  image: "https://images.unsplash.com/photo-1565620731358-e8c038abc8d1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-  category: "Política",
-  categoryColor: "blue",
-  author: "Ana Campos",
-  time: "Hace 2 horas",
-  isPremium: false
-},
-{
-  id: 2,
-  title: "Museo de la Ciudad inaugura exposición sobre la historia maya",
-  excerpt: "La exposición 'Raíces Ancestrales' presenta más de 200 piezas arqueológicas y documentos históricos nunca antes exhibidos al público.",
-  image: "https://images.unsplash.com/photo-1581578017093-cd30fce4eeb7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-  category: "Cultura",
-  categoryColor: "green",
-  author: "Roberto Díaz",
-  time: "Hace 5 horas",
-  isPremium: true
-},
-{
-  id: 3,
-  title: "Empresarios yucatecos impulsan nuevo corredor gastronómico en el norte de Mérida",
-  excerpt: "El proyecto busca promover la gastronomía local y generar más de 500 empleos directos en la zona, según la Cámara de Comercio.",
-  image: "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-  category: "Economía",
-  categoryColor: "yellow",
-  author: "Luis Hernández",
-  time: "Hace 8 horas",
-  isPremium: false
-}
-];
+// Filtrar noticias destacadas y recientes
+const featuredNews = news.filter(item => item.is_featured);
+const latestNews = news.slice(0, 6);
 
-// Datos para estadísticas
+// Estadísticas
 const stats = [
-{
-  title: "Total Noticias",
-  value: "1,247",
-  description: "Sobre Mérida este mes",
-  icon: "M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-.586-1.414l-4.5-4.5A2 2 0 0012.586 3H12",
-  color: "blue"
-},
-{
-  title: "Visitas",
-  value: "850K",
-  description: "Este mes",
-  icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z",
-  color: "emerald"
-},
-{
-  title: "Comentarios",
-  value: "5,842",
-  description: "Últimos 30 días",
-  icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z",
-  color: "purple"
-},
-{
-  title: "Premium",
-  value: "2.3K",
-  description: "Suscriptores activos",
-  icon: "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
-  color: "yellow"
-}
+  {
+    title: "Total Noticias",
+    value: news.length,
+    description: "Sobre Mérida este mes",
+    icon: "M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-.586-1.414l-4.5-4.5A2 2 0 0012.586 3H12",
+    color: "red"
+  },
+  {
+    title: "Visitas",
+    value: "850K",
+    description: "Este mes",
+    icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z",
+    color: "blue"
+  },
+  {
+    title: "Comentarios",
+    value: "5,842",
+    description: "Últimos 30 días",
+    icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z",
+    color: "green"
+  },
+  {
+    title: "Premium",
+    value: "2.3K",
+    description: "Suscriptores activos",
+    icon: "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
+    color: "yellow"
+  }
 ];
 
-// Datos para categorías populares
-const popularCategories = [
-{ name: "Política", count: 258, color: "blue" },
-{ name: "Turismo", count: 185, color: "green" },
-{ name: "Cultura", count: 124, color: "yellow" },
-{ name: "Gastronomía", count: 87, color: "purple" }
-];
+// Categorías populares con conteo de noticias
+const popularCategories = categories.map(category => {
+  // Contar cuántas noticias hay en cada categoría
+  const count = news.filter(item => {
+    if (Array.isArray(item.categories)) {
+      return item.categories.some(cat => 
+        typeof cat === 'object' ? cat.id === category.id : cat === category.id
+      );
+    }
+    return false;
+  }).length;
+  
+  return {
+    name: category.category,
+    count: count || category.news_count || 0,
+    color: "red"
+  };
+});
 
-// Datos para autores destacados
-const featuredAuthors = [
-{ name: "Carlos Medina", articles: 12, image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
-{ name: "Ana Campos", articles: 9, image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
-{ name: "Luis Hernández", articles: 7, image: "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" }
-];
+// Obtener noticias más populares (simuladas)
+const popularNews = [...news].sort(() => 0.5 - Math.random()).slice(0, 4);
 ---
 
-<DashboardLayout titulo="Noticias Mérida">
-<div class="space-y-8">
-  <!-- Banner Premium -->
-  <PremiumBanner />
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Noticias Mérida" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Noticias Mérida</title>
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <!-- Barra de navegación superior -->
+    <TopNavbar />
 
-  <!-- Categorías Seleccionables -->
-  <CategoryFilter />
+    <div class="max-w-screen-2xl mx-auto px-4 py-6">
+      <h1 class="text-3xl font-bold mb-6 border-b-2 border-red-600 pb-2">Noticias Principales</h1>
 
-  <!-- Sección de Noticias Destacadas -->
-  <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
-    <div class="p-6 border-b border-gray-200">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-900">Noticias Destacadas de Mérida</h2>
-        <a href="/noticia-detalle" class="text-blue-600 hover:text-blue-800 text-sm fontmedium">
-          Ver todas
-        </a>
-      </div>
-    </div>
-    
-    <!-- Carrusel de noticias destacadas -->
-    <div class="p-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Noticia destacada principal -->
-        <div class="md:col-span-2 group">
-          <div class="relative overflow-hidden rounded-xl aspect-video">
-            <img 
-              src={featuredNews[0].image || "/placeholder.svg"}
-              alt={featuredNews[0].title}
-              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 p-6">
-              <span class="inline-block px-3 py-1 bg-red-600 text-white text-xs font-semibold rounded-full mb-2">
-                {featuredNews[0].category}
-              </span>
-              <h3 class="text-xl md:text-2xl font-bold text-white mb-2">
-                {featuredNews[0].title}
-              </h3>
-              <p class="text-gray-200 text-sm mb-2">
-                {featuredNews[0].excerpt}
-              </p>
-              <div class="flex items-center text-gray-300 text-xs">
-                <span>Por {featuredNews[0].author}</span>
-                <span class="mx-2">•</span>
-                <span>{featuredNews[0].time}</span>
-                {featuredNews[0].isPremium && (
-                  <span class="ml-2 px-2 py-0.5 bg-yellow-500 text-white rounded text-xs">PREMIUM</span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Noticias destacadas secundarias -->
-        <div class="space-y-4">
-          {featuredNews.slice(1, 3).map(news => (
-            <div class="group">
-              <div class="relative overflow-hidden rounded-xl aspect-video">
-                <img 
-                  src={news.image || "/placeholder.svg"}
-                  alt={news.title}
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      <!-- Contenido principal -->
+      <div class="mb-8">
+        <!-- Noticia principal destacada -->
+        {!loading && !error && featuredNews.length > 0 && (
+          <section class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredNews.slice(0, 3).map((item) => (
+                <NewsCard 
+                  title={item.title}
+                  excerpt={item.content}
+                  categories={item.categories as any}
+                  image={item.principal_image}
+                  author={item.editor?.name || 'Editor'}
+                  time={item.publication_date}
+                  isPremium={item.isPremium}
+                  is_featured={item.is_featured}
+                  id={item.id}
+                  views={Math.floor(Math.random() * 500) + 100}
                 />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                <div class="absolute bottom-0 left-0 p-4">
-                  <span class={`inline-block px-2 py-1 ${
-                    news.categoryColor === 'blue' ? 'bg-blue-600' : 
-                    news.categoryColor === 'green' ? 'bg-green-600' : 
-                    'bg-yellow-600'
-                  } text-white text-xs font-semibold rounded-full mb-1`}>
-                    {news.category}
-                  </span>
-                  <h3 class="text-sm md:text-base font-bold text-white">
-                    {news.title}
-                  </h3>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
+          </section>
+        )}
 
-  <!-- Estadísticas Generales -->
-  <section>
-    <h2 class="text-xl font-bold text-gray-800 mb-4">Estadísticas Generales</h2>
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map(stat => (
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-[1.02]">
-          <div class="p-6">
-            <div class="flex items-center">
-              <div class={`flex-shrink-0 p-3 bg-${stat.color}-100 rounded-full`}>
-                <svg class={`h-8 w-8 text-${stat.color}-600`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={stat.icon}></path>
-                </svg>
-              </div>
-              <div class="ml-5">
-                <h3 class="text-lg font-semibold text-gray-900">{stat.title}</h3>
-                <div class="mt-1">
-                  <p class={`text-2xl font-bold text-${stat.color}-600`}>{stat.value}</p>
-                  <p class="text-sm text-gray-500">{stat.description}</p>
-                </div>
-              </div>
-            </div>
+        <!-- Banner Premium -->
+        <div class="mb-12">
+          <PremiumBanner />
+        </div>
+
+        <!-- Categorías Seleccionables -->
+        {!loading && !error && categories.length > 0 && (
+          <section class="mb-8">
+            <CategoryFilter categories={categories} />
+          </section>
+        )}
+
+        {loading && (
+          <div class="bg-white rounded-lg shadow overflow-hidden p-8 text-center mb-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mb-4"></div>
+            <p class="text-gray-600">Cargando datos...</p>
           </div>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <!-- Secciones de Noticias -->
-  <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Últimas Noticias -->
-    <div class="lg:col-span-2">
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
-          <div class="flex items-center justify-between">
-            <h2 class="text-xl font-bold text-gray-900">Últimas Noticias de Mérida</h2>
-            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300">
-              Nueva Noticia
+        )}
+        
+        {error && (
+          <div class="bg-white rounded-lg shadow overflow-hidden p-8 text-center mb-8">
+            <svg class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-red-500 font-medium">{error}</p>
+            <button id="retry-button" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300">
+              Reintentar
             </button>
           </div>
-        </div>
-        <div class="divide-y divide-gray-200">
-          {latestNews.map(news => (
-            <NewsCard 
-              title={news.title}
-              excerpt={news.excerpt}
-              category={news.category}
-              categoryColor={news.categoryColor}
-              image={news.image}
-              author={news.author}
-              time={news.time}
-              isPremium={news.isPremium}
-            />
-          ))}
-        </div>
-        <div class="p-4 border-t border-gray-200 text-center">
-          <a href="/noticias" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-            Ver todas las noticias
-          </a>
-        </div>
+        )}
+
+        {!loading && !error && news.length === 0 && (
+          <div class="bg-white rounded-lg shadow overflow-hidden p-8 text-center mb-8">
+            <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-.586-1.414l-4.5-4.5A2 2 0 0012.586 3H12"></path>
+            </svg>
+            <p class="text-gray-600 font-medium">No hay noticias disponibles</p>
+            <a href="/noticias/nueva" class="mt-4 inline-block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300">
+              Crear primera noticia
+            </a>
+          </div>
+        )}
+
+        <!-- Sección principal de contenido -->
+        {!loading && !error && news.length > 0 && (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {latestNews.map((item) => (
+              <NewsCard 
+                title={item.title}
+                excerpt={item.content}
+                categories={item.categories as any}
+                image={item.principal_image}
+                author={item.editor?.name || 'Editor'}
+                time={item.publication_date}
+                isPremium={item.isPremium}
+                is_featured={item.is_featured}
+                id={item.id}
+                views={Math.floor(Math.random() * 500) + 100}
+              />
+            ))}
+          </div>
+        )}
+
+        <!-- Sección eliminada: Estadísticas -->
       </div>
     </div>
 
-    <!-- Panel Lateral -->
-    <div class="space-y-6">
-      <!-- Sección Premium -->
-      <PremiumContent />
+    <!-- Footer -->
+    <Footer />
 
-      <!-- Categorías Populares -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
-          <h2 class="text-xl font-bold text-gray-900">Categorías Populares</h2>
-        </div>
-        <div class="p-6">
-          <div class="space-y-4">
-            {popularCategories.map(category => (
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <div class={`w-3 h-3 bg-${category.color}-500 rounded-full mr-3`}></div>
-                  <span class="text-gray-600">{category.name}</span>
-                </div>
-                <span class={`px-3 py-1 bg-${category.color}-100 text-${category.color}-800 rounded-full text-sm`}>
-                  {category.count} artículos
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+    <script>
+      // Verificar autenticación
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login';
+        }
+      }
 
-      <!-- Autores Destacados -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
-          <h2 class="text-xl font-bold text-gray-900">Autores Destacados</h2>
-        </div>
-        <div class="p-6">
-          <div class="space-y-4">
-            {featuredAuthors.map(author => (
-              <div class="flex items-center">
-                <img class="h-10 w-10 rounded-full object-cover mr-3" src={author.image || "/placeholder.svg"} alt={author.name} />
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{author.name}</p>
-                  <p class="text-xs text-gray-500">{author.articles} artículos este mes</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-</div>
-</DashboardLayout>
+      // Botón de reintentar
+      document.addEventListener('DOMContentLoaded', () => {
+        const retryButton = document.getElementById('retry-button');
+        retryButton?.addEventListener('click', () => {
+          window.location.reload();
+        });
 
-<script>
-// Verificar autenticación
-const token = localStorage.getItem('token');
-if (!token) {
-  window.location.href = '/login';
-}
+        // Funcionalidad para los botones de categoría
+        const categoryButtons = document.querySelectorAll('[data-category]');
 
-// Funcionalidad para los botones de categoría
-document.addEventListener('DOMContentLoaded', () => {
-  const categoryButtons = document.querySelectorAll('.px-4.py-2.rounded-full');
-  
-  categoryButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Quitar la clase activa de todos los botones
-      categoryButtons.forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white');
-        btn.classList.add('bg-gray-200', 'text-gray-800');
+        categoryButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const category = button.getAttribute('data-category');
+            // Filtrar noticias visibles según la categoría
+            filterNewsByCategory(category);
+          });
+        });
       });
-      
-      // Añadir la clase activa al botón seleccionado
-      button.classList.remove('bg-gray-200', 'text-gray-800');
-      button.classList.add('bg-blue-600', 'text-white');
-      
-      // Aquí se podría añadir la lógica para filtrar las noticias por categoría
-      const buttonText = button.textContent ? button.textContent.trim() : '';
-      console.log('Categoría seleccionada:', buttonText);
-    });
-  });
-});
-</script>
+
+      // Función para filtrar noticias por categoría
+      function filterNewsByCategory(category) {
+        const newsItems = document.querySelectorAll('.news-item');
+
+        if (category === 'all') {
+          // Mostrar todas las noticias
+          newsItems.forEach(item => {
+            if (item instanceof HTMLElement) {
+              item.style.display = 'block';
+            }
+          });
+        } else {
+          // Mostrar solo las noticias de la categoría seleccionada
+          newsItems.forEach(item => {
+            const newsCategory = item.getAttribute('data-category');
+            if (item instanceof HTMLElement) {
+              if (newsCategory === category) {
+                item.style.display = 'block';
+              } else {
+                item.style.display = 'none';
+              }
+            }
+          });
+        }
+      }
+    </script>
+  </body>
+</html>
 

@@ -1,0 +1,139 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout titulo="Perfil de Usuario">
+  <div class="max-w-4xl mx-auto py-8 px-4">
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <!-- Encabezado del perfil -->
+      <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-6">
+        <div class="flex items-center space-x-6">
+          <img 
+            src="https://ui-avatars.com/api/?name=Usuario&background=0D8ABC&color=fff"
+            alt="Avatar del usuario"
+            class="w-24 h-24 rounded-full border-4 border-white shadow-lg transform transition-transform duration-300 hover:scale-105"
+          />
+          <div>
+            <h1 class="text-3xl font-bold text-white mb-1">Usuario</h1>
+            <p class="text-blue-100">Usuario</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información del perfil -->
+      <div class="p-8">
+        <div class="max-w-2xl mx-auto">
+          <!-- Información personal -->
+          <section class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl shadow-md border border-blue-100 transform transition-all duration-300 hover:shadow-lg">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-6 text-center border-b border-blue-200 pb-3">Información Personal</h2>
+            <div class="space-y-6">
+              <div class="bg-white p-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
+                <div class="flex items-center mb-2">
+                  <span class="text-blue-600 mr-3 bg-blue-100 p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                  <div>
+                    <p class="text-sm font-medium text-gray-500">Nombre</p>
+                    <p class="text-lg font-semibold text-gray-800 nombre-usuario">Cargando...</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-white p-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
+                <div class="flex items-center mb-2">
+                  <span class="text-blue-600 mr-3 bg-blue-100 p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                  </span>
+                  <div>
+                    <p class="text-sm font-medium text-gray-500">Email</p>
+                    <p class="text-lg font-semibold text-gray-800 email-usuario">Cargando...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</DashboardLayout>
+
+<script>
+  import { useAuthStore } from '../stores/authStore';
+  
+  // Verificar autenticación al cargar la página
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Verificar si hay token en localStorage
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
+    
+    // Obtener datos del usuario desde localStorage
+    const userStr = localStorage.getItem('user');
+    let usuario = userStr ? JSON.parse(userStr) : null;
+    
+    if (!usuario) {
+      window.location.href = '/login';
+      return;
+    }
+    
+    // Actualizar los elementos del DOM con los datos del usuario
+    const titleElement = document.querySelector('h1.text-3xl');
+    if (titleElement) {
+      titleElement.textContent = usuario.name || 'Usuario';
+    }
+    
+    // Actualizar el nombre y email en las tarjetas
+    const nombreElement = document.querySelector('.nombre-usuario');
+    if (nombreElement) {
+      nombreElement.textContent = usuario.name || 'No disponible';
+    }
+    
+    const emailElement = document.querySelector('.email-usuario');
+    if (emailElement) {
+      emailElement.textContent = usuario.email || 'No disponible';
+    }
+    
+    // Actualizar la imagen del avatar con el nombre del usuario
+    const avatarImg = document.querySelector('img[alt="Avatar del usuario"]');
+    if (avatarImg && usuario.name) {
+      avatarImg.setAttribute('src', `https://ui-avatars.com/api/?name=${encodeURIComponent(usuario.name)}&background=0D8ABC&color=fff`);
+    }
+    
+    // Intentar cargar los datos más recientes del perfil
+    try {
+      await useAuthStore.getState().obtenerPerfilUsuario();
+      // Actualizar la UI con los datos más recientes
+      usuario = useAuthStore.getState().usuario;
+      if (usuario) {
+        // Actualizar el título
+        if (titleElement) {
+          titleElement.textContent = usuario.name || 'Usuario';
+        }
+        
+        // Actualizar el nombre y email en las tarjetas
+        if (nombreElement) {
+          nombreElement.textContent = usuario.name || 'No disponible';
+        }
+        
+        if (emailElement) {
+          emailElement.textContent = usuario.email || 'No disponible';
+        }
+        
+        // Actualizar la imagen del avatar
+        if (avatarImg && usuario.name) {
+          avatarImg.setAttribute('src', `https://ui-avatars.com/api/?name=${encodeURIComponent(usuario.name)}&background=0D8ABC&color=fff`);
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar el perfil:', error);
+    }
+  });
+</script>

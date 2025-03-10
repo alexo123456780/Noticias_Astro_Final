@@ -1,54 +1,109 @@
 ---
-const categories = [
-{ id: 'all', name: 'Todas', active: true },
-{ id: 'politics', name: 'Política', active: false },
-{ id: 'economy', name: 'Economía', active: false },
-{ id: 'culture', name: 'Cultura', active: false },
-{ id: 'tourism', name: 'Turismo', active: false },
-{ id: 'sports', name: 'Deportes', active: false },
-{ id: 'security', name: 'Seguridad', active: false },
-{ id: 'education', name: 'Educación', active: false },
+import type { Category } from '../types/news';
+import { newsService } from '../services/newsService';
+
+interface Props {
+  categories: Category[];
+}
+
+const { categories = [] } = Astro.props;
+
+// Agregar la categoría "Todas" al principio de la lista
+const allCategories = [
+  { id: 'all', category: 'Todas' },
+  ...categories
 ];
 ---
 
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-<div class="p-6 border-b border-gray-200">
-  <h2 class="text-xl font-bold text-gray-900">Categorías</h2>
-</div>
-<div class="p-6">
-  <div class="flex flex-wrap gap-3" id="category-filters">
-    {categories.map((category) => (
-      <button 
-        data-category={category.id}
-        class={`px-4 py-2 rounded-full transition-colors ${
-          category.active 
-            ? 'bg-blue-600 text-white' 
-            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-        }`}
-      >
-        {category.name}
-      </button>
-    ))}
+<div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+  <div class="p-4 border-b border-gray-200">
+    <h2 class="text-xl font-bold text-gray-900">Explorar por Categorías</h2>
   </div>
-</div>
+  <div class="p-4">
+    <div class="flex flex-wrap gap-2" id="category-filters">
+      {allCategories.map((category) => (
+        <button 
+          data-category={category.id}
+          class="px-3 py-1 rounded transition-colors text-sm font-medium bg-gray-100 text-gray-800 hover:bg-red-600 hover:text-white" 
+        >
+          {category.category}
+        </button>
+      ))}
+    </div>
+  </div>
 </div>
 
 <script>
 // Funcionalidad para los botones de categoría
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Obtener las categorías más recientes de la API
+  try {
+    const { newsService } = await import('../services/newsService');
+    const response = await newsService.getAllCategories();
+    const latestCategories = response.data || [];
+    
+    // Actualizar los botones de categoría si hay nuevas categorías
+    if (latestCategories.length > 0) {
+      updateCategoryButtons(latestCategories);
+    }
+  } catch (error) {
+    console.error('Error al obtener categorías actualizadas:', error);
+  }
+  
+  // Configurar los botones de categoría
+  setupCategoryButtons();
+});
+
+// Función para actualizar los botones de categoría con los datos más recientes
+function updateCategoryButtons(categories) {
+  const categoryFilters = document.getElementById('category-filters');
+  if (!categoryFilters) return;
+  
+  // Limpiar los botones existentes
+  categoryFilters.innerHTML = '';
+  
+  // Agregar el botón "Todas"
+  const allButton = document.createElement('button');
+  allButton.setAttribute('data-category', 'all');
+  allButton.className = 'px-3 py-1 rounded transition-colors text-sm font-medium bg-red-600 text-white hover:bg-red-600 hover:text-white';
+  allButton.textContent = 'Todas';
+  categoryFilters.appendChild(allButton);
+  
+  // Agregar los botones de categoría
+  categories.forEach(category => {
+    const button = document.createElement('button');
+    button.setAttribute('data-category', category.id);
+    button.className = 'px-3 py-1 rounded transition-colors text-sm font-medium bg-gray-100 text-gray-800 hover:bg-red-600 hover:text-white';
+    button.textContent = category.category || category.name || `Categoría ${category.id}`;
+    categoryFilters.appendChild(button);
+  });
+  
+  // Configurar los eventos de los botones
+  setupCategoryButtons();
+}
+
+// Función para configurar los eventos de los botones de categoría
+function setupCategoryButtons() {
   const categoryButtons = document.querySelectorAll('#category-filters button');
+  
+  // Establecer la categoría "Todas" como activa por defecto
+  const allButton = document.querySelector('[data-category="all"]');
+  if (allButton) {
+    allButton.classList.remove('bg-gray-100', 'text-gray-800');
+    allButton.classList.add('bg-red-600', 'text-white');
+  }
   
   categoryButtons.forEach(button => {
     button.addEventListener('click', () => {
       // Quitar la clase activa de todos los botones
       categoryButtons.forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white');
-        btn.classList.add('bg-gray-200', 'text-gray-800');
+        btn.classList.remove('bg-red-600', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-gray-800');
       });
       
       // Añadir la clase activa al botón seleccionado
-      button.classList.remove('bg-gray-200', 'text-gray-800');
-      button.classList.add('bg-blue-600', 'text-white');
+      button.classList.remove('bg-gray-100', 'text-gray-800');
+      button.classList.add('bg-red-600', 'text-white');
       
       // Obtener la categoría seleccionada
       const selectedCategory = button.getAttribute('data-category');
@@ -57,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       filterNewsByCategory(selectedCategory);
     });
   });
-});
+}
 
 // Función para filtrar noticias por categoría
 function filterNewsByCategory(category) {
