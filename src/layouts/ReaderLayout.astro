@@ -1,0 +1,82 @@
+---
+import Layout from './Layout.astro';
+import TopNavbar from '../components/TopNavbar.astro';
+
+const { titulo } = Astro.props;
+---
+
+<Layout titulo={titulo}>
+<div class="min-h-screen bg-gray-50">
+  <!-- Main Content without sidebar -->
+  <div>
+    <!-- Top Navigation -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo/Title -->
+          <div class="flex items-center">
+            <a href="/dashboard" class="flex items-center">
+              <h2 class="text-2xl font-bold text-red-600 tracking-tight">Noticias Mérida</h2>
+            </a>
+          </div>
+          
+          <!-- Navigation Links for Readers -->
+          <nav class="hidden md:flex space-x-4">
+            <a href="/dashboard" class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">Inicio</a>
+            <a href="/categorias" class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">Categorías</a>
+            <a href="/premium" class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">Premium</a>
+          </nav>
+          
+          <!-- User Menu -->
+          <div class="flex items-center space-x-4">
+            <!-- Notificaciones -->
+            <button class="p-2 text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 relative">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+              </svg>
+              <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
+            </button>
+            
+            <!-- Profile dropdown -->
+            <div class="relative">
+              <a href="/perfil" class="p-2 text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+              </a>
+            </div>
+            
+            <!-- Logout button -->
+            <button
+              id="cerrarSesion"
+              class="p-2 text-red-600 hover:text-red-700 focus:outline-none focus:text-red-700"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <slot />
+    </main>
+  </div>
+</div>
+</Layout>
+
+<script>
+import { useAuthStore } from '../stores/authStore';
+import toast from 'react-hot-toast';
+
+const cerrarSesionBtn = document.getElementById('cerrarSesion');
+if (cerrarSesionBtn) {
+  cerrarSesionBtn.addEventListener('click', () => {
+    useAuthStore.getState().cerrarSesion();
+    toast.success('Sesión cerrada correctamente');
+    window.location.href = '/';
+  });
+}
+</script>

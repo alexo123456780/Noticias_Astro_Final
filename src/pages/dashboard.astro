@@ -1,5 +1,6 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
+import ReaderLayout from '../layouts/ReaderLayout.astro';
 import PremiumBanner from '../components/PremiumBanner.astro';
 import CategoryFilter from '../components/CategoryFilter.astro';
 import NewsCard from '../components/NewsCard.astro';
@@ -7,23 +8,37 @@ import PremiumContent from '../components/PremiumContent.astro';
 import Footer from '../components/Footer.astro';
 import TopNavbar from '../components/TopNavbar.astro';
 
-// Importar servicios
+
 import { newsService } from '../services/newsService';
 import { redactionService } from '../services/redactionService';
-import type { News, Category } from '../types/news';
+import type { News, Category, Redaction } from '../types/news';
 
 // Obtener datos de la API
 let news: News[] = [];
+let redactions: Redaction[] = [];
 let categories: Category[] = [];
 let loading = true;
 let error: string | null = null;
+let userType = 'reader'; 
+
+// Intentar obtener el tipo de usuario del localStorage (solo en el cliente)
+if (typeof window !== 'undefined') {
+  const storedUserType = localStorage.getItem('userType');
+  if (storedUserType === 'redactor') {
+    // Redirigir a los redactores a la página de gestión de noticias
+    window.location.href = '/noticias';
+    return;
+  } else if (storedUserType === 'reader') {
+    userType = storedUserType;
+  }
+}
 
 try {
+  // Fetch data based on default user type first
   const [newsResponse, categoriesResponse] = await Promise.all([
     newsService.getAllNews(),
     newsService.getAllCategories()
   ]);
-  
   news = newsResponse.data || [];
   categories = categoriesResponse.data || [];
   loading = false;
@@ -92,28 +107,107 @@ const popularCategories = categories.map(category => {
 const popularNews = [...news].sort(() => 0.5 - Math.random()).slice(0, 4);
 ---
 
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="Noticias Mérida" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Noticias Mérida</title>
-  </head>
-  <body class="bg-gray-100 min-h-screen">
-    <!-- Barra de navegación superior -->
-    <TopNavbar />
+<!-- Determine which layout to use based on user type -->
+{userType === 'redactor' ? (
+  <DashboardLayout titulo="Panel de Redactor">
+      <div class="max-w-screen-2xl mx-auto px-4 py-6">
+        <!-- Panel de Redactor -->
+        <div class="mb-8">
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold border-b-2 border-red-600 pb-2">Panel de Redactor</h1>
+            <a href="/noticias/nueva" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300">
+              Crear Nueva Noticia
+            </a>
+          </div>
 
-    <div class="max-w-screen-2xl mx-auto px-4 py-6">
-      <h1 class="text-3xl font-bold mb-6 border-b-2 border-red-600 pb-2">Noticias Principales</h1>
+          {loading && (
+            <div class="bg-white rounded-lg shadow overflow-hidden p-8 text-center mb-8">
+              <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mb-4"></div>
+              <p class="text-gray-600">Cargando datos...</p>
+            </div>
+          )}
+          
+          {error && (
+            <div class="bg-white rounded-lg shadow overflow-hidden p-8 text-center mb-8">
+              <svg class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="text-red-500 font-medium">{error}</p>
+              <button id="retry-button" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300">
+                Reintentar
+              </button>
+            </div>
+          )}
 
-      <!-- Contenido principal -->
-      <div class="mb-8">
-        <!-- Noticia principal destacada -->
-        {!loading && !error && featuredNews.length > 0 && (
-          <section class="mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredNews.slice(0, 3).map((item) => (
+          {!loading && !error && (
+            <div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {news.map((item) => (
+                  <NewsCard 
+                    title={item.title}
+                    excerpt={item.content}
+                    categories={item.categories as any}
+                    image={item.principal_image}
+                    author={item.editor?.name || 'Editor'}
+                    time={item.publication_date}
+                    isPremium={item.isPremium}
+                    is_featured={item.is_featured}
+                    id={item.id}
+                    views={Math.floor(Math.random() * 500) + 100}
+                    isEditable={true}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+  </DashboardLayout>
+) : (
+  <ReaderLayout titulo="Noticias Principales">
+      <div class="max-w-screen-2xl mx-auto px-4 py-6">
+        <!-- Vista de Lector -->
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold mb-6 border-b-2 border-red-600 pb-2">Noticias Principales</h1>
+
+          <!-- Noticia principal destacada -->
+          {!loading && !error && featuredNews.length > 0 && (
+            <section class="mb-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {featuredNews.slice(0, 3).map((item) => (
+                  <NewsCard 
+                    title={item.title}
+                    excerpt={item.content}
+                    categories={item.categories as any}
+                    image={item.principal_image}
+                    author={item.editor?.name || 'Editor'}
+                    time={item.publication_date}
+                    isPremium={item.isPremium}
+                    is_featured={item.is_featured}
+                    id={item.id}
+                    views={Math.floor(Math.random() * 500) + 100}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- Banner Premium -->
+          <div class="mb-12">
+            <PremiumBanner />
+          </div>
+
+          <!-- Categorías Seleccionables -->
+          {!loading && !error && categories.length > 0 && (
+            <section class="mb-8">
+              <CategoryFilter categories={categories} />
+            </section>
+          )}
+
+          <!-- Últimas Noticias -->
+          {!loading && !error && latestNews.length > 0 && (
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {latestNews.map((item) => (
                 <NewsCard 
                   title={item.title}
                   excerpt={item.content}
@@ -128,20 +222,8 @@ const popularNews = [...news].sort(() => 0.5 - Math.random()).slice(0, 4);
                 />
               ))}
             </div>
-          </section>
-        )}
-
-        <!-- Banner Premium -->
-        <div class="mb-12">
-          <PremiumBanner />
+          )}
         </div>
-
-        <!-- Categorías Seleccionables -->
-        {!loading && !error && categories.length > 0 && (
-          <section class="mb-8">
-            <CategoryFilter categories={categories} />
-          </section>
-        )}
 
         {loading && (
           <div class="bg-white rounded-lg shadow overflow-hidden p-8 text-center mb-8">
@@ -161,100 +243,117 @@ const popularNews = [...news].sort(() => 0.5 - Math.random()).slice(0, 4);
             </button>
           </div>
         )}
-
-        {!loading && !error && news.length === 0 && (
-          <div class="bg-white rounded-lg shadow overflow-hidden p-8 text-center mb-8">
-            <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-.586-1.414l-4.5-4.5A2 2 0 0012.586 3H12"></path>
-            </svg>
-            <p class="text-gray-600 font-medium">No hay noticias disponibles</p>
-            <a href="/noticias/nueva" class="mt-4 inline-block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300">
-              Crear primera noticia
-            </a>
-          </div>
-        )}
-
-        <!-- Sección principal de contenido -->
-        {!loading && !error && news.length > 0 && (
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {latestNews.map((item) => (
-              <NewsCard 
-                title={item.title}
-                excerpt={item.content}
-                categories={item.categories as any}
-                image={item.principal_image}
-                author={item.editor?.name || 'Editor'}
-                time={item.publication_date}
-                isPremium={item.isPremium}
-                is_featured={item.is_featured}
-                id={item.id}
-                views={Math.floor(Math.random() * 500) + 100}
-              />
-            ))}
-          </div>
-        )}
-
-        <!-- Sección eliminada: Estadísticas -->
       </div>
-    </div>
+  </ReaderLayout>
+)}
 
-    <!-- Footer -->
-    <Footer />
+  <!-- Footer -->
+  <Footer />
 
-    <script>
-      // Verificar autenticación
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          window.location.href = '/login';
-        }
+  <script>
+    // Verificar autenticación
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      const userType = localStorage.getItem('userType');
+      if (!token) {
+        window.location.href = '/login';
       }
+    }
 
-      // Botón de reintentar
-      document.addEventListener('DOMContentLoaded', () => {
-        const retryButton = document.getElementById('retry-button');
-        retryButton?.addEventListener('click', () => {
-          window.location.reload();
-        });
-
-        // Funcionalidad para los botones de categoría
-        const categoryButtons = document.querySelectorAll('[data-category]');
-
-        categoryButtons.forEach(button => {
-          button.addEventListener('click', () => {
-            const category = button.getAttribute('data-category');
-            // Filtrar noticias visibles según la categoría
-            filterNewsByCategory(category);
-          });
-        });
+    // Botón de reintentar
+    document.addEventListener('DOMContentLoaded', () => {
+      const retryButton = document.getElementById('retry-button');
+      retryButton?.addEventListener('click', () => {
+        window.location.reload();
       });
 
-      // Función para filtrar noticias por categoría
-      function filterNewsByCategory(category) {
-        const newsItems = document.querySelectorAll('.news-item');
+      // Funcionalidad para los botones de categoría
+      const categoryButtons = document.querySelectorAll('[data-category]');
 
-        if (category === 'all') {
-          // Mostrar todas las noticias
-          newsItems.forEach(item => {
-            if (item instanceof HTMLElement) {
+      categoryButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const category = button.getAttribute('data-category');
+          filterNewsByCategory(category);
+        });
+      });
+    });
+
+    // Función para filtrar noticias por categoría
+    function filterNewsByCategory(category) {
+      const newsItems = document.querySelectorAll('.news-item');
+
+      if (category === 'all') {
+        newsItems.forEach(item => {
+          if (item instanceof HTMLElement) {
+            item.style.display = 'block';
+          }
+        });
+      } else {
+        newsItems.forEach(item => {
+          const newsCategory = item.getAttribute('data-category');
+          if (item instanceof HTMLElement) {
+            if (newsCategory === category) {
               item.style.display = 'block';
+            } else {
+              item.style.display = 'none';
             }
-          });
-        } else {
-          // Mostrar solo las noticias de la categoría seleccionada
-          newsItems.forEach(item => {
-            const newsCategory = item.getAttribute('data-category');
-            if (item instanceof HTMLElement) {
-              if (newsCategory === category) {
-                item.style.display = 'block';
-              } else {
-                item.style.display = 'none';
-              }
-            }
-          });
-        }
+          }
+        });
       }
-    </script>
-  </body>
-</html>
+    }
+  </script>
+<script>
+  // Botón de reintentar
+  document.addEventListener('DOMContentLoaded', () => {
+    const retryButton = document.getElementById('retry-button');
+    retryButton?.addEventListener('click', () => {
+      window.location.reload();
+    });
+
+    // Funcionalidad para los botones de categoría
+    const categoryButtons = document.querySelectorAll('[data-category]');
+
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const category = button.getAttribute('data-category');
+        filterNewsByCategory(category);
+      });
+    });
+  });
+
+  // Función para filtrar noticias por categoría
+  function filterNewsByCategory(category) {
+    const newsItems = document.querySelectorAll('.news-item');
+
+    if (category === 'all') {
+      newsItems.forEach(item => {
+        if (item instanceof HTMLElement) {
+          item.style.display = 'block';
+        }
+      });
+    } else {
+      newsItems.forEach(item => {
+        const newsCategory = item.getAttribute('data-category');
+        if (item instanceof HTMLElement) {
+          if (newsCategory === category) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        }
+      });
+    }
+  }
+</script>
+
+
+<script>
+  // Check user type on client side
+  if (typeof window !== 'undefined') {
+    const storedUserType = localStorage.getItem('userType');
+    if (storedUserType === 'redactor') {
+      window.location.reload(); // Reload to get redactor view
+    }
+  }
+</script>
 

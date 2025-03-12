@@ -6,7 +6,11 @@ export const newsService = {
   getAllNews: async (): Promise<ApiResponse<News[]>> => {
     try {
       const response = await api.get("/news")
-      return response.data
+      return {
+        success: true,
+        data: Array.isArray(response.data) ? response.data : response.data.data || [],
+        message: "Noticias obtenidas exitosamente"
+      }
     } catch (error) {
       console.error("Error al obtener noticias:", error)
       return { success: false, data: [], message: "Error al obtener noticias" }
@@ -16,7 +20,11 @@ export const newsService = {
   getNewsById: async (id: number): Promise<ApiResponse<News>> => {
     try {
       const response = await api.get(`/news/${id}`)
-      return response.data
+      return {
+        success: true,
+        data: response.data.data || response.data,
+        message: "Noticia obtenida exitosamente"
+      }
     } catch (error) {
       console.error(`Error al obtener noticia con ID ${id}:`, error)
       throw error
@@ -25,12 +33,11 @@ export const newsService = {
 
   createNews: async (newsData: Partial<News>): Promise<ApiResponse<News>> => {
     try {
-      // Asegurarse de que los campos requeridos estén presentes
       const requiredFields = {
         title: newsData.title,
         content: newsData.content,
-        editor_id: newsData.editor_id || 1, // Valor por defecto
-        redaction_id: newsData.redaction_id || 1, // Valor por defecto
+        editor_id: newsData.editor_id || 1, 
+        redaction_id: newsData.redaction_id || 1, 
         principal_image: newsData.principal_image || "https://via.placeholder.com/800x400",
         publication_date: newsData.publication_date || new Date().toISOString(),
         isPremium: newsData.isPremium || false,
@@ -38,7 +45,6 @@ export const newsService = {
 
       const response = await api.post("/news", requiredFields)
 
-      // Si hay categorías, asociarlas a la noticia
       if (newsData.categories && Array.isArray(newsData.categories) && newsData.categories.length > 0) {
         const newId = response.data?.data?.id
         if (newId) {

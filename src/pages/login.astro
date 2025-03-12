@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout titulo="Iniciar Sesión">
   <main class="min-h-screen flex relative">
-    <!-- Fondo de Mérida -->
+  
     <div class="absolute inset-0 z-0">
       <img 
         src="https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?auto=format&fit=crop&q=80"
@@ -14,7 +14,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
     </div>
 
-    <!-- Panel izquierdo - Formulario -->
+    
     <div class="w-1/2 flex items-center justify-center p-8 bg-white/95 backdrop-blur-lg relative z-10">
       <div class="w-full max-w-md space-y-8">
         <div class="text-center animate-fade-in">
@@ -127,7 +127,7 @@ import Layout from '../layouts/Layout.astro';
               </svg>
             </div>
             <h3 class="text-xl font-semibold text-gray-900 mb-2">¡Inicio de sesión exitoso!</h3>
-            <p class="text-gray-600">Redirigiendo al dashboard...</p>
+            <p class="text-gray-600">Bienvenido !!!...</p>
           </div>
 
           <!-- Estado de error -->
@@ -145,6 +145,9 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </main>
 </Layout>
+
+
+<!-- Animaciones de las goods -->
 
 <style>
   @keyframes fade-in {
@@ -170,6 +173,24 @@ import Layout from '../layouts/Layout.astro';
   const loadingState = document.getElementById('loadingState');
   const successState = document.getElementById('successState');
   const errorState = document.getElementById('errorState');
+  
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const loginType = urlParams.get('type') || 'reader'; 
+  
+  
+  const loginTitle = document.querySelector('h2');
+  if (loginTitle) {
+    loginTitle.textContent = loginType === 'redactor' ? 'Bienvenido Redactor' : 'Bienvenido Lector';
+  }
+  
+  
+  const loginDescription = document.querySelector('h2 + p');
+  if (loginDescription) {
+    loginDescription.textContent = loginType === 'redactor' 
+      ? 'Inicia sesión como redactor para crear noticias' 
+      : 'Inicia sesión como lector para acceder a contenido';
+  }
 
   function showModal() {
     if (validationModal) {
@@ -214,10 +235,17 @@ import Layout from '../layouts/Layout.astro';
     showState(loadingState);
 
     try {
-      await useAuthStore.getState().login(email, password);
+      // Usar el tipo de usuario (reader o redactor) para el inicio de sesión
+      // Esto asegura que se use la API correcta según el tipo de usuario
+      await useAuthStore.getState().login(email, password, loginType);
       showState(successState);
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        // Redirigir según el tipo de usuario
+        if (loginType === 'redactor') {
+          window.location.href = '/noticias'; // Redactores van al gestor de noticias
+        } else {
+          window.location.href = '/dashboard'; // Lectores van al dashboard
+        }
       }, 2000);
     } catch (error: any) {
       showState(errorState);

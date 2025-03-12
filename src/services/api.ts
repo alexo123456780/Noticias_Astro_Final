@@ -9,7 +9,6 @@ const api = axios.create({
   },
 })
 
-// Función para obtener el token de forma segura (compatible con SSR)
 const getToken = () => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("token")
@@ -37,12 +36,13 @@ api.interceptors.response.use(
 )
 
 export const authService = {
-  login: async (email: string, password: string) => {
+  login: async (email: string, password: string, userType = 'reader') => {
     try {
       const response = await api.post("/login", { email, password })
       if (response.data.token && typeof window !== "undefined") {
         localStorage.setItem("token", response.data.token)
-        toast.success(response.data.message || "Inicio de sesión exitoso tilin")
+        localStorage.setItem("userType", userType) 
+        toast.success(response.data.message || "Inicio de sesión exitoso")
       }
       return {
         user: response.data.user,
@@ -53,7 +53,7 @@ export const authService = {
     }
   },
 
-  registro: async (nombre: string, email: string, password: string) => {
+  registro: async (nombre: string, email: string, password: string, userType = 'reader') => {
     try {
       const response = await api.post("/register", {
         name: nombre,
@@ -61,7 +61,24 @@ export const authService = {
         password,
       })
 
+      if (userType === 'reader' && response.data.user) {
+        try {
+          const { readerService } = await import('./readerService')
+          
+          await readerService.createReader({
+            user_id: response.data.user.id,
+            name: nombre,
+            last_name: nombre.split(' ').slice(1).join(' ') || 'Apellido', 
+            email: email
+          })
+        } catch (readerError) {
+          console.error("Error al crear el lector:", readerError)
+          throw readerError 
+        }
+      }
+
       if (response.data.user && typeof window !== "undefined") {
+        localStorage.setItem("registeredUserType", userType) 
         toast.success(response.data.message || "Registro exitoso")
       }
       return response.data

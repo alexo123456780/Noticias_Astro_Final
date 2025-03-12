@@ -12,8 +12,9 @@ interface AuthState {
   token: string | null
   cargando: boolean
   error: string | null
-  login: (email: string, password: string) => Promise<void>
-  registro: (nombre: string, email: string, password: string) => Promise<void>
+  userType: 'reader' | 'redactor' | null
+  login: (email: string, password: string, userType?: string) => Promise<void>
+  registro: (nombre: string, email: string, password: string, userType?: string) => Promise<void>
   cerrarSesion: () => void
   obtenerPerfilUsuario: () => Promise<void>
 }
@@ -40,19 +41,22 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: getToken(),
   cargando: false,
   error: null,
+  userType: null,
 
-  login: async (email: string, password: string) => {
+  login: async (email: string, password: string, userType = 'reader') => {
     set({ cargando: true, error: null })
     try {
-      const respuesta = await authService.login(email, password)
+      const respuesta = await authService.login(email, password, userType)
       // Guardar el usuario en localStorage
       if (typeof window !== "undefined" && respuesta.user) {
         localStorage.setItem("user", JSON.stringify(respuesta.user))
+        localStorage.setItem("userType", userType) // Store the user type
       }
       set({
         token: respuesta.token,
         usuario: respuesta.user,
         cargando: false,
+        userType: userType as 'reader' | 'redactor',
       })
     } catch (error: any) {
       set({
@@ -63,10 +67,14 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  registro: async (nombre: string, email: string, password: string) => {
+  registro: async (nombre: string, email: string, password: string, userType = 'reader') => {
     set({ cargando: true, error: null })
     try {
-      const respuesta = await authService.registro(nombre, email, password)
+      const respuesta = await authService.registro(nombre, email, password, userType)
+      // Store the user type for later use during login
+      if (typeof window !== "undefined") {
+        localStorage.setItem("registeredUserType", userType)
+      }
       set({ cargando: false })
       return respuesta
     } catch (error: any) {
@@ -83,8 +91,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (typeof window !== "undefined") {
       localStorage.removeItem("token")
       localStorage.removeItem("user")
+      localStorage.removeItem("userType")
     }
-    set({ usuario: null, token: null })
+    set({ usuario: null, token: null, userType: null })
   },
   
   obtenerPerfilUsuario: async () => {

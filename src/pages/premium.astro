@@ -31,8 +31,6 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
               <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
-              <span>Report  stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
               <span>Reportajes exclusivos y análisis en profundidad</span>
             </li>
             <li class="flex items-start">
@@ -232,6 +230,9 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
 </DashboardLayout>
 
 <script>
+  import { readerService } from '../services/readerService';
+  import toast from 'react-hot-toast';
+
   // Verificar autenticación
   const token = localStorage.getItem('token');
   if (!token) {
@@ -239,15 +240,114 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
   }
   
   // Funcionalidad para los botones de suscripción
-  document.addEventListener('DOMContentLoaded', () => {
-    const subscriptionButtons = document.querySelectorAll('.py-3.px-4.rounded-lg');
+  document.addEventListener('DOMContentLoaded', async () => {
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
     
-    subscriptionButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        // Aquí iría la lógica para procesar la suscripción
-        alert('Falta agregar esta parte en la api tilina.');
-      });
-    });
+    if (!user) {
+      window.location.href = '/login';
+      return;
+    }
+    
+    // Verificar si el usuario ya tiene una suscripción activa
+    try {
+      // Primero necesitamos obtener el reader_id asociado al usuario
+      const readersResponse = await readerService.getAllReaders();
+      const readers = readersResponse.data || [];
+      const currentReader = readers.find(reader => reader.user_id === user.id);
+      
+      let readerId;
+      
+      if (currentReader) {
+        readerId = currentReader.id;
+        
+        // Verificar si ya tiene suscripción activa
+        const suscriptionStatus = await readerService.checkActiveSuscription(readerId);
+        
+        if (suscriptionStatus.hasActiveSuscription) {
+          // Si ya tiene suscripción, mostrar mensaje y deshabilitar botones
+          const subscriptionButtons = document.querySelectorAll('.py-3.px-4.rounded-lg');
+          subscriptionButtons.forEach(button => {
+            button.textContent = 'Ya estás suscrito';
+            (button as HTMLButtonElement).disabled = true;
+            button.classList.add('bg-gray-400');
+            button.classList.remove('bg-blue-600', 'bg-yellow-600', 'hover:bg-blue-700', 'hover:bg-yellow-700');
+          });
+          
+          toast.success('Ya tienes una suscripción premium activa');
+        } else {
+          // Si no tiene suscripción, habilitar botones
+          setupSubscriptionButtons(readerId);
+        }
+      } else {
+        // Si el usuario no es un reader, crearlo primero
+        // Extraer nombre y apellido del nombre completo
+        const nameParts = user.name.split(' ');
+        const firstName = nameParts[0];
+        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+        
+        const readerData = {
+          user_id: user.id,
+          name: firstName,
+          last_name: lastName || 'Apellido', // Usar 'Apellido' como valor por defecto si no hay apellido
+          email: user.email
+        };
+        
+        const newReaderResponse = await readerService.createReader(readerData);
+        readerId = newReaderResponse.data?.id;
+        
+        // Configurar botones de suscripción
+        setupSubscriptionButtons(readerId);
+      }
+    } catch (error) {
+      console.error('Error al verificar suscripción:', error);
+      toast.error('Error al verificar tu estado de suscripción');
+    }
   });
+  
+  function setupSubscriptionButtons(readerId) {
+    const mensualButton = document.querySelector('.bg-blue-600');
+    const anualButton = document.querySelector('.bg-yellow-600');
+    
+    if (mensualButton) {
+      mensualButton.addEventListener('click', async () => {
+        try {
+          const result = await readerService.processPremiumPayment(readerId, 'mensual');
+          
+          if (result.success) {
+            toast.success(result.message);
+            setTimeout(() => {
+              window.location.href = '/dashboard';
+            }, 2000);
+          } else {
+            toast.error(result.message);
+          }
+        } catch (error) {
+          console.error('Error al procesar pago mensual:', error);
+          toast.error('Error al procesar el pago. Por favor, inténtalo de nuevo.');
+        }
+      });
+    }
+    
+    if (anualButton) {
+      anualButton.addEventListener('click', async () => {
+        try {
+          const result = await readerService.processPremiumPayment(readerId, 'anual');
+          
+          if (result.success) {
+            toast.success(result.message);
+            setTimeout(() => {
+              window.location.href = '/dashboard';
+            }, 2000);
+          } else {
+            toast.error(result.message);
+          }
+        } catch (error) {
+          console.error('Error al procesar pago anual:', error);
+          toast.error('Error al procesar el pago. Por favor, inténtalo de nuevo.');
+        }
+      });
+    }
+  }
 </script>
 

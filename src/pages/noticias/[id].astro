@@ -1,19 +1,25 @@
 ---
-import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import NewsLayout from '../../layouts/NewsLayout.astro';
 import { newsService } from '../../services/newsService';
 import type { News, NewsImage } from '../../types/news';
 
 // Define getStaticPaths to pre-generar las rutas en tiempo de compilación
 export async function getStaticPaths() {
   // Obtener todas las noticias para generar las rutas
-  const response = await newsService.getAllNews();
-  const allNews = response.data || [];
-  
-  // Crear un path para cada noticia
-  return allNews.map((news) => ({
-    params: { id: news.id.toString() },
-    props: { news },
-  }));
+  try {
+    const response = await newsService.getAllNews();
+    const allNews = response.data || [];
+    
+    // Crear un path para cada noticia
+    return allNews.map((news) => ({
+      params: { id: news.id.toString() },
+      props: { news },
+    }));
+  } catch (error) {
+    console.error('Error al obtener noticias para rutas estáticas:', error);
+    // Devolver un array vacío en caso de error para permitir SSR fallback
+    return [];
+  }
 }
 
 // Obtener el ID de la noticia de los parámetros y la noticia de props
@@ -21,10 +27,13 @@ const { id } = Astro.params;
 const { news: propNews } = Astro.props;
 
 // Obtener los datos de la noticia y sus imágenes
-let news: News = propNews as News;
+let news: News | null = null;
 let newsImages: NewsImage[] = [];
 let loading = true;
 let error: string | null = null;
+
+// Verificar el tipo de usuario
+const userType = Astro.cookies.get('userType')?.value || 'reader';
 
 try {
   if (id) {
@@ -50,7 +59,7 @@ try {
 }
 ---
 
-<DashboardLayout titulo={news ? news.title : 'Detalle de Noticia'}>
+<NewsLayout titulo={news ? news.title : 'Detalle de Noticia'}>
 <div class="max-w-4xl mx-auto py-8">
   <div class="mb-6">
     <a href="/noticias" class="text-red-600 hover:text-red-800 flex items-center font-medium transition-colors duration-200">
@@ -162,7 +171,7 @@ try {
     </div>
   )}
 </div>
-</DashboardLayout>
+</NewsLayout>
 
 <script>
 import { newsService } from '../../services/newsService';
@@ -174,6 +183,17 @@ if (typeof window !== 'undefined') {
   if (!token) {
     window.location.href = '/login';
   }
+  
+  // Verificar tipo de usuario y mostrar/ocultar elementos según el rol
+  const userType = localStorage.getItem('userType') || 'reader';
+  
+  // Si es un lector, ocultar elementos de edición
+  if (userType === 'reader') {
+    const editorElements = document.querySelectorAll('.editor-only');
+    editorElements.forEach(el => {
+      el.classList.add('hidden');
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -182,6 +202,16 @@ document.addEventListener('DOMContentLoaded', () => {
   retryButton?.addEventListener('click', () => {
     window.location.reload();
   });
+  
+  // Añadir animaciones a los elementos de la noticia
+  const animateElements = document.querySelectorAll('.animate-on-load');
+  animateElements.forEach((el, index) => {
+    setTimeout(() => {
+      el.classList.add('opacity-100', 'translate-y-0');
+      el.classList.remove('opacity-0', 'translate-y-4');
+    }, 100 * index);
+  });
 });
+
 </script>
 

@@ -1,10 +1,4 @@
 ---
-// Obtener el usuario actual (simulado)
-const user = {
-  name: "Editor",
-  avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-};
-
 // Enlaces de navegación
 const navLinks = [
   { name: "Inicio", url: "/dashboard" },
@@ -12,11 +6,22 @@ const navLinks = [
   { name: "Contacto", url: "/contacto" }
 ];
 
-// Enlaces de usuario
-const userLinks = [
+// Enlaces de usuario autenticado
+const userAuthLinks = [
   { name: "Perfil", url: "/perfil" },
+  { name: "Premium", url: "/premium" },
   { name: "Cerrar Sesión", url: "#", id: "cerrarSesion" }
 ];
+
+// Enlaces de usuario no autenticado
+const userGuestLinks = [
+  { name: "Iniciar Sesión", url: "/login" },
+  { name: "Registrarse", url: "/registro" }
+];
+
+// Verificar si hay token en el lado del servidor (para SSR)
+let isAuthenticated = false;
+let isPremium = false;
 ---
 
 <header class="bg-gray-800 text-white">
@@ -37,16 +42,8 @@ const userLinks = [
       </div>
       
       <!-- Enlaces de usuario derecha -->
-      <div class="flex items-center space-x-4">
-        {userLinks.map(link => (
-          <a 
-            href={link.url} 
-            id={link.id} 
-            class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium"
-          >
-            {link.name}
-          </a>
-        ))}
+      <div class="flex items-center space-x-4" id="userLinksContainer">
+        <!-- Los enlaces se cargarán dinámicamente con JavaScript -->
       </div>
     </div>
   </div>
@@ -56,14 +53,69 @@ const userLinks = [
 import { useAuthStore } from '../stores/authStore';
 import toast from 'react-hot-toast';
 
-const cerrarSesionBtn = document.getElementById('cerrarSesion');
-if (cerrarSesionBtn) {
-  cerrarSesionBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    useAuthStore.getState().cerrarSesion();
-    toast.success('Sesión cerrada correctamente');
-    window.location.href = '/';
-  });
+// Función para renderizar los enlaces de usuario según el estado de autenticación
+function renderUserLinks() {
+  const token = localStorage.getItem('token');
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : null;
+  const container = document.getElementById('userLinksContainer');
+  
+  if (!container) return;
+  
+  // Limpiar el contenedor
+  container.innerHTML = '';
+  
+  if (token && user) {
+    // Usuario autenticado - mostrar enlaces de usuario autenticado
+    const links = [
+      { name: "Perfil", url: "/perfil" },
+      { name: "Premium", url: "/premium", class: "bg-yellow-500 text-white rounded-lg px-3 py-1" },
+      { name: "Cerrar Sesión", url: "#", id: "cerrarSesion" }
+    ];
+    
+    // Verificar si el usuario es premium (esto se implementará más adelante)
+    // Por ahora, simplemente mostramos el enlace a Premium
+    
+    links.forEach(link => {
+      const a = document.createElement('a');
+      a.href = link.url;
+      a.textContent = link.name;
+      a.className = link.class || "text-gray-300 hover:text-white px-3 py-2 text-sm font-medium";
+      if (link.id) a.id = link.id;
+      container.appendChild(a);
+    });
+    
+    // Agregar evento al botón de cerrar sesión
+    const cerrarSesionBtn = document.getElementById('cerrarSesion');
+    if (cerrarSesionBtn) {
+      cerrarSesionBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        useAuthStore.getState().cerrarSesion();
+        toast.success('Sesión cerrada correctamente');
+        window.location.href = '/';
+      });
+    }
+  } else {
+    // Usuario no autenticado - mostrar enlaces de inicio de sesión y registro
+    const links = [
+      { name: "Iniciar como Lector", url: "/login?type=reader" },
+      { name: "Iniciar como Redactor", url: "/login?type=redactor" },
+      { name: "Registrarse", url: "/registro", class: "bg-emerald-500 text-white rounded-lg px-3 py-1" }
+    ];
+    
+    links.forEach(link => {
+      const a = document.createElement('a');
+      a.href = link.url;
+      a.textContent = link.name;
+      a.className = link.class || "text-gray-300 hover:text-white px-3 py-2 text-sm font-medium";
+      container.appendChild(a);
+    });
+  }
 }
+
+// Renderizar los enlaces al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+  renderUserLinks();
+});
 </script>
 

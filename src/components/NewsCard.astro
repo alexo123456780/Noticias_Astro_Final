@@ -50,50 +50,82 @@ const truncatedExcerpt = excerpt && excerpt.length > 150
 const formattedDate = time ? new Date(time).toLocaleDateString() : '';
 ---
 
-<article class="bg-white rounded-lg shadow overflow-hidden news-item h-full flex flex-col transform transition-all duration-300 hover:scale-[1.03] hover:shadow-lg" data-category={categoryColor} data-id={id}>
-  <div class="relative">
+<article class="bg-white rounded-lg shadow-md overflow-hidden news-item h-full flex flex-col transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border border-gray-100 animate-on-load opacity-0 translate-y-4 transition-opacity transition-transform ease-out" data-category={categoryId} data-id={id}>
+  <div class="relative overflow-hidden">
     <img 
       src={image || "/placeholder.svg?height=400&width=600"} 
       alt={title} 
-      class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105"
+      class="w-full h-52 object-cover transition-transform duration-500 hover:scale-105"
       onerror="this.src='/placeholder.svg?height=400&width=600'; this.onerror=null;"
     />
-    {isPremium && (
-      <span class="absolute top-2 right-2 px-2 py-1 bg-yellow-500 text-white text-xs font-bold rounded-sm">
-        PREMIUM
-      </span>
-    )}
+    <div class="absolute top-0 left-0 w-full flex justify-between items-start p-2">
+      <div class="flex flex-wrap gap-1">
+        {categories && Array.isArray(categories) && categories.map((cat: any) => (
+          <span class="px-2 py-1 bg-red-600 text-white text-xs font-bold rounded-sm shadow-sm">
+            {typeof cat === 'object' ? cat.category : cat}
+          </span>
+        ))}
+      </div>
+      <div class="flex gap-1">
+        {isPremium && (
+          <span class="px-2 py-1 bg-yellow-500 text-white text-xs font-bold rounded-sm shadow-sm">
+            PREMIUM
+          </span>
+        )}
+        {is_featured && (
+          <span class="px-2 py-1 bg-blue-600 text-white text-xs font-bold rounded-sm shadow-sm">
+            DESTACADO
+          </span>
+        )}
+      </div>
+    </div>
+    {/* Overlay de estilo periódico */}
+    <div class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-black/70 to-transparent"></div>
   </div>
-  <div class="p-4 flex-1 flex flex-col">
-    <div class="mb-2">
-      <span class="text-xs text-gray-600">{firstCategory || 'Sin categoría'}</span>
+  
+  <div class="p-5 flex-1 flex flex-col">
+    <div class="mb-2 flex justify-between items-center">
+      <span class="text-xs font-serif italic text-gray-600">{formattedDate}</span>
+      <span class="text-xs font-medium text-red-600 flex items-center">
+        <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+        </svg>
+        {views} lecturas
+      </span>
     </div>
     
-    <h3 class="text-xl font-bold text-gray-900 mb-2 hover:text-red-600 transition-colors">
-      <a href={id ? `/noticias/${id}` : '#'}>
+    <h3 class="text-xl font-bold font-serif text-gray-900 mb-3 hover:text-red-600 transition-colors leading-tight">
+      <a href={id ? `/noticias/${id}` : '#'} class="hover:underline decoration-red-500 decoration-2 underline-offset-2">
         {title}
       </a>
     </h3>
     
-    <p class="text-sm text-gray-600 mb-4 flex-grow">
+    <p class="text-sm text-gray-700 mb-4 flex-grow leading-relaxed">
       {truncatedExcerpt}
     </p>
     
-    <div class="flex items-center justify-between mt-auto pt-2 border-t border-gray-200">
-      <span class="text-sm text-gray-500 flex items-center">
+    <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-200">
+      <span class="text-sm text-gray-700 flex items-center font-medium">
         <svg class="h-4 w-4 text-red-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
         </svg>
         {author}
       </span>
-      <span class="text-sm text-gray-500 flex items-center">
-        <svg class="h-4 w-4 text-red-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+      <a href={id ? `/noticias/${id}` : '#'} class="text-sm font-medium text-red-600 hover:text-red-800 transition-colors flex items-center">
+        Leer más
+        <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
         </svg>
-        {views}
-      </span>
+      </a>
     </div>
   </div>
 </article>
+
+<style>
+  /* Animación de entrada para las tarjetas de noticias */
+  .animate-on-load {
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+</style>
 

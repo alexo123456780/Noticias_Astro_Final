@@ -150,6 +150,10 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
 </DashboardLayout>
 
 <script>
+  import { readerService } from '../services/readerService';
+  import { authService } from '../services/api';
+  import toast from 'react-hot-toast';
+
   // Verificar autenticación
   const token = localStorage.getItem('token');
   if (!token) {
@@ -157,72 +161,127 @@ import DashboardLayout from '../layouts/DashboardLayout.astro';
   }
 
   // Funcionalidad para los botones de suscripción
-  document.addEventListener('DOMContentLoaded', () => {
-    const suscripcionMensual = document.getElementById('suscripcionMensual');
-    const suscripcionAnual = document.getElementById('suscripcionAnual');
-    const planSeleccionadoElement = document.getElementById('planSeleccionado');
+  document.addEventListener('DOMContentLoaded', async () => {
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
     
-    if (suscripcionMensual && planSeleccionadoElement instanceof HTMLSelectElement) {
-      suscripcionMensual.addEventListener('click', () => {
-        planSeleccionadoElement.value = 'mensual';
-        // Desplazar a la sección del formulario
-        const formElement = document.getElementById('registroPremiumForm');
-        if (formElement) {
-          formElement.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
+    if (!user) {
+      window.location.href = '/login';
+      return;
     }
     
-    if (suscripcionAnual && planSeleccionadoElement instanceof HTMLSelectElement) {
-      suscripcionAnual.addEventListener('click', () => {
-        planSeleccionadoElement.value = 'anual';
-        // Desplazar a la sección del formulario
-        const formElement = document.getElementById('registroPremiumForm');
-        if (formElement) {
-          formElement.scrollIntoView({ behavior: 'smooth' });
+    // Verificar si el usuario ya tiene una suscripción activa
+    try {
+      // Primero necesitamos obtener el reader_id asociado al usuario
+      const readersResponse = await readerService.getAllReaders();
+      const readers = readersResponse.data || [];
+      const currentReader = readers.find(reader => reader.user_id === user.id);
+      
+      let readerId;
+      
+      if (currentReader) {
+        readerId = currentReader.id;
+        
+        // Verificar si ya tiene suscripción activa
+        const suscriptionStatus = await readerService.checkActiveSuscription(readerId);
+        
+        if (suscriptionStatus.hasActiveSuscription) {
+          // Si ya tiene suscripción, mostrar mensaje y redirigir al dashboard
+          toast.success('Ya tienes una suscripción premium activa');
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 2000);
+          return;
         }
-      });
-    }
-    
-    // Validación del formulario
-    const registroPremiumForm = document.getElementById('registroPremiumForm');
-    if (registroPremiumForm) {
-      registroPremiumForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+      } else {
+        // Si el usuario no es un reader, crearlo primero
+        // Extraer nombre y apellido del nombre completo
+        const nameParts = user.name.split(' ');
+        const firstName = nameParts[0];
+        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
         
-        const passwordElement = document.getElementById('password');
-        const confirmPasswordElement = document.getElementById('confirmPassword');
+        const readerData = {
+          user_id: user.id,
+          name: firstName,
+          last_name: lastName || 'Apellido', // Usar 'Apellido' como valor por defecto si no hay apellido
+          email: user.email
+        };
         
-        if (passwordElement instanceof HTMLInputElement && confirmPasswordElement instanceof HTMLInputElement) {
-          const password = passwordElement.value;
-          const confirmPassword = confirmPasswordElement.value;
-          
-          if (password !== confirmPassword) {
-            alert('Las contraseñas no coinciden. Por favor, verifica.');
-            return;
-          }
-        }
-        
-        // Aquí iría la lógica para procesar el formulario
-        alert('¡Gracias por suscribirte! En un entorno real, aquí se procesaría tu suscripción.');
-        
-        // Redireccionar al dashboard
-        // window.location.href = '/dashboard';
-      });
-    }
-    
-    // Mejorar la experiencia de selección de método de pago
-    const metodoPagoOptions = document.querySelectorAll('[name="metodoPago"]');
-    metodoPagoOptions.forEach(option => {
-      const parent = option.parentElement;
-      if (parent) {
-        parent.addEventListener('click', () => {
-          if (option instanceof HTMLInputElement) {
-            option.checked = true;
+        const newReaderResponse = await readerService.createReader(readerData);
+        readerId = newReaderResponse.data?.id;
+      }
+      
+      // Configurar los botones de selección de plan
+      const suscripcionMensual = document.getElementById('suscripcionMensual');
+      const suscripcionAnual = document.getElementById('suscripcionAnual');
+      const planSeleccionadoElement = document.getElementById('planSeleccionado');
+      
+      if (suscripcionMensual && planSeleccionadoElement instanceof HTMLSelectElement) {
+        suscripcionMensual.addEventListener('click', () => {
+          planSeleccionadoElement.value = 'mensual';
+          // Desplazar a la sección del formulario
+          const formElement = document.getElementById('registroPremiumForm');
+          if (formElement) {
+            formElement.scrollIntoView({ behavior: 'smooth' });
           }
         });
       }
-    });
+      
+      if (suscripcionAnual && planSeleccionadoElement instanceof HTMLSelectElement) {
+        suscripcionAnual.addEventListener('click', () => {
+          planSeleccionadoElement.value = 'anual';
+          // Desplazar a la sección del formulario
+          const formElement = document.getElementById('registroPremiumForm');
+          if (formElement) {
+            formElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+      
+      // Validación del formulario
+      const registroPremiumForm = document.getElementById('registroPremiumForm');
+      if (registroPremiumForm) {
+        registroPremiumForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const planSeleccionado = planSeleccionadoElement instanceof HTMLSelectElement ? 
+            planSeleccionadoElement.value : 'mensual';
+          
+          try {
+            // Procesar el pago y crear la suscripción
+            const result = await readerService.processPremiumPayment(readerId, planSeleccionado as 'mensual' | 'anual');
+            
+            if (result.success) {
+              toast.success(result.message);
+              setTimeout(() => {
+                window.location.href = '/dashboard';
+              }, 2000);
+            } else {
+              toast.error(result.message);
+            }
+          } catch (error) {
+            console.error('Error al procesar la suscripción:', error);
+            toast.error('Error al procesar la suscripción. Por favor, inténtalo de nuevo.');
+          }
+        });
+      }
+      
+      // Mejorar la experiencia de selección de método de pago
+      const metodoPagoOptions = document.querySelectorAll('[name="metodoPago"]');
+      metodoPagoOptions.forEach(option => {
+        const parent = option.parentElement;
+        if (parent) {
+          parent.addEventListener('click', () => {
+            if (option instanceof HTMLInputElement) {
+              option.checked = true;
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error al verificar suscripción:', error);
+      toast.error('Error al verificar tu estado de suscripción');
+    }
   });
 </script>
 
